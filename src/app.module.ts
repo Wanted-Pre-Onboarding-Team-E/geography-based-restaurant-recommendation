@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { User } from './entity/user.entity';
 import { Restaurant } from './entity/restaurant.entity';
@@ -30,6 +31,7 @@ import { CityModule } from './feature/city/city.module';
           entities: [User, Restaurant, Review],
           synchronize: configService.get<string>('NODE_ENV') === 'local',
           logging: configService.get<string>('NODE_ENV') === 'local',
+          namingStrategy: new SnakeNamingStrategy(), // 컬럼명 snake case로 변환
         };
       },
     }),
