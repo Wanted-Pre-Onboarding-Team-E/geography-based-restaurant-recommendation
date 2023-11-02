@@ -24,7 +24,7 @@ export class AuthService {
    * @Param username 사용자 계정이름
    * @Param password 사용자 비밀번호, 해시 함수를 적용하고 저장 */
   async createUser({ username, password }) {
-    await this.userRepository.save(
+    return await this.userRepository.save(
       this.userRepository.create({
         username,
         password,
@@ -59,8 +59,6 @@ export class AuthService {
     if (!comparePasswords) {
       throw new ConflictException(FailType.USER_CONFIRM_PASSWORD_MISMATCH);
     }
-
-    return comparePasswords;
   }
 
   /** 중복된 사용자 여부 확인
@@ -75,8 +73,6 @@ export class AuthService {
     if (user) {
       throw new ConflictException(FailType.USER_USERNAME_EXIST);
     }
-
-    return username;
   }
 
   /**

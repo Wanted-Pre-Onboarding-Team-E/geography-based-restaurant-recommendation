@@ -20,20 +20,20 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async signUp(@Body() signupUserDto: SignUpUserDto, @Res() res: Response) {
     // 중복된 사용자 존재 여부 확인
-    const creatableUser = await this.authService.checkUserExists(
-      signupUserDto.username,
-    );
+    await this.authService.checkUserExists(signupUserDto.username);
+
     // 비밀번호 유효성 확인
-    const passwordValid = await this.authService.checkPasswordValidate(
+    await this.authService.checkPasswordValidate(
       signupUserDto.password,
       signupUserDto.confirmPassword,
     );
+
     // 사용자 생성
-    await this.authService.createUser(signupUserDto);
+    const user = await this.authService.createUser(signupUserDto);
 
     return res.send({
       message: SuccessType.USER_SIGNUP,
-      data: { creatableUser, passwordValid },
+      data: user.username,
     });
   }
 
