@@ -42,11 +42,13 @@ export class AuthService {
       /[!@#$%^&*]/.test(password),
     ].filter(Boolean).length;
     if (characterTypes < 2) {
-      throw new BadRequestException(FailType.PASSWORD_CHARACTER_REQUIRE);
+      throw new BadRequestException(FailType.SIGNUP_PASSWORD_CHARACTER_REQUIRE);
     }
 
     if (/([!@#$%^&*()+\-=\[\]{}|;:'",.<>/?\w])\1\1/.test(password)) {
-      throw new BadRequestException(FailType.PASSWORD_DISALLOW_CONSECUTIVE);
+      throw new BadRequestException(
+        FailType.SIGNUP_PASSWORD_DISALLOW_CONSECUTIVE,
+      );
     }
 
     const hashedConfirmPassword = await bcrypt.hash(confirmPassword, 10);
@@ -55,7 +57,7 @@ export class AuthService {
       hashedConfirmPassword,
     );
     if (!comparePasswords) {
-      throw new ConflictException(FailType.PASSWORD_MISMATCHED);
+      throw new ConflictException(FailType.SIGNUP_PASSWORD_MISMATCH);
     }
 
     return comparePasswords;
@@ -71,7 +73,7 @@ export class AuthService {
     });
 
     if (user) {
-      throw new ConflictException(`${username}은 이미 존재하는 계정입니다.`);
+      throw new ConflictException(FailType.SIGNUP_USERNAME_EXIST);
     }
 
     return username;
@@ -87,7 +89,7 @@ export class AuthService {
       username: signInUserDto.username,
     });
     if (!user) {
-      throw new UnauthorizedException('존재하지 않는 아이디입니다.');
+      throw new UnauthorizedException(FailType.SIGNIN_USERNAME_NOT_EXIST);
     }
 
     const isMatch = await this.comparePassword(
@@ -95,7 +97,7 @@ export class AuthService {
       user.password,
     );
     if (!isMatch) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+      throw new UnauthorizedException(FailType.SIGNIN_PASSWORD_MISMATCH);
     }
 
     return user;
