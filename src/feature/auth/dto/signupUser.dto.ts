@@ -6,7 +6,7 @@ export class SignUpUserDto {
   username!: string;
 
   @IsString()
-  @MinLength(10, { message: FailType.SIGNUP_PASSWORD_LENGTH_REQUIRE })
+  @MinLength(10, { message: FailType.USER_PASSWORD_LENGTH_REQUIRE })
   password!: string;
 
   @IsString()

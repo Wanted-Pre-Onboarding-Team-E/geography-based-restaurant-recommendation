@@ -42,12 +42,12 @@ export class AuthService {
       /[!@#$%^&*]/.test(password),
     ].filter(Boolean).length;
     if (characterTypes < 2) {
-      throw new BadRequestException(FailType.SIGNUP_PASSWORD_CHARACTER_REQUIRE);
+      throw new BadRequestException(FailType.USER_PASSWORD_CHARACTER_REQUIRE);
     }
 
     if (/([!@#$%^&*()+\-=\[\]{}|;:'",.<>/?\w])\1\1/.test(password)) {
       throw new BadRequestException(
-        FailType.SIGNUP_PASSWORD_DISALLOW_CONSECUTIVE,
+        FailType.USER_PASSWORD_DISALLOW_CONSECUTIVE,
       );
     }
 
@@ -57,7 +57,7 @@ export class AuthService {
       hashedConfirmPassword,
     );
     if (!comparePasswords) {
-      throw new ConflictException(FailType.SIGNUP_PASSWORD_MISMATCH);
+      throw new ConflictException(FailType.USER_CONFIRM_PASSWORD_MISMATCH);
     }
 
     return comparePasswords;
@@ -73,7 +73,7 @@ export class AuthService {
     });
 
     if (user) {
-      throw new ConflictException(FailType.SIGNUP_USERNAME_EXIST);
+      throw new ConflictException(FailType.USER_USERNAME_EXIST);
     }
 
     return username;
@@ -89,7 +89,7 @@ export class AuthService {
       username: signInUserDto.username,
     });
     if (!user) {
-      throw new UnauthorizedException(FailType.SIGNIN_USERNAME_NOT_EXIST);
+      throw new UnauthorizedException(FailType.USER_USERNAME_NOT_EXIST);
     }
 
     const isMatch = await this.comparePassword(
@@ -97,7 +97,7 @@ export class AuthService {
       user.password,
     );
     if (!isMatch) {
-      throw new UnauthorizedException(FailType.SIGNIN_PASSWORD_MISMATCH);
+      throw new UnauthorizedException(FailType.USER_PASSWORD_MISMATCH);
     }
 
     return user;
