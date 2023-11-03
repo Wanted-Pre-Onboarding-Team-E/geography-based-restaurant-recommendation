@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { User } from '../../entity/user.entity';
-import { SignInUserDto } from './dto/signinUser.dto';
+import { SignInUserDto } from './dto/signInUser.dto';
 import { FailType } from '../../enum/failType.enum';
 
 @Injectable()
@@ -99,11 +99,7 @@ export class AuthService {
     return user;
   }
 
-  async getAccessToken({ id, username }) {
-    const payload = {
-      id,
-      username,
-    };
+  async getAccessToken(payload: any) {
     return await this.jwtService.signAsync(payload);
   }
 
