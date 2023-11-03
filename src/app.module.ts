@@ -11,6 +11,7 @@ import { AuthModule } from './feature/auth/auth.module';
 import { UserModule } from './feature/user/user.module';
 import { RestaurantModule } from './feature/restaurant/restaurant.module';
 import { CityModule } from './feature/city/city.module';
+import { ReviewModule } from './feature/review/review.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { CityModule } from './feature/city/city.module';
     UserModule,
     RestaurantModule,
     CityModule,
+    ReviewModule,
   ],
   providers: [],
 })

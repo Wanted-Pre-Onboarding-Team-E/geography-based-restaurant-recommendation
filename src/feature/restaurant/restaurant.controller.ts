@@ -1,16 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
-import { CreateReviewDto } from './dto/CreateReviewDto';
-import { ApiResult } from '../custom/apiResult';
-import { SuccessType } from 'src/enum/successType.enum';
 
 @Controller('restaurants')
 export class RestaurantController {
@@ -24,22 +13,5 @@ export class RestaurantController {
   @Get('/:id')
   getRestaurantsById() {
     return 'GET /restaurants/:id';
-  }
-
-  @Post('/:id/review/:userId')
-  async postReviewOfRestaurantById(
-    //NOTE: userId 값은 추후에 Param -> Req로 변경.
-    @Param('userId', ParseIntPipe) userId: number,
-    @Param('id', ParseIntPipe) restaurantId: number,
-    @Body(ValidationPipe) createReviewDto: CreateReviewDto,
-  ): Promise<ApiResult<void>> {
-    await this.restaurantService.postReviewOfRestaurantById(
-      userId,
-      restaurantId,
-      createReviewDto,
-    );
-    return {
-      message: SuccessType.REVIEW_SAVE,
-    };
   }
 }

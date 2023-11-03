@@ -16,5 +16,5 @@ export class CreateReviewDto {
 
   @IsString()
   @IsOptional()
-  content: string;
+  content?: string;
 }
