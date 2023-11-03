@@ -44,6 +44,7 @@
     "csv-parser": "^3.0.0",
     "fs": "^0.0.1-security",
     "mysql2": "^3.6.2",
+    "node-cache": "^5.1.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.17",
