@@ -4,6 +4,7 @@ import { Restaurant } from 'src/entity/restaurant.entity';
 import { Repository } from 'typeorm';
 import { CreateReviewDto } from './dto/CreateReviewDto';
 import { ReviewService } from './review.service';
+import { ErrorMessage } from '../error/error.enum';
 
 @Injectable()
 export class RestaurantService {
@@ -22,7 +23,7 @@ export class RestaurantService {
       id: restaurantId,
     });
     if (!restaurant) {
-      throw new NotFoundException('음식점을 찾을 수 없습니다.');
+      throw new NotFoundException(ErrorMessage.RESTAURANT_NOTFOUND);
     }
 
     const createReview = await this.reviewService.createReview(

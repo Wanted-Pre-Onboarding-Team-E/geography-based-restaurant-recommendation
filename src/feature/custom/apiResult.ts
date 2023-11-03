@@ -3,16 +3,14 @@ import { ErrorMessage } from '../error/error.enum';
 
 type SuccessResult<T> = T extends void
   ? {
-      success: true;
       message: SuccessType;
     }
   : {
-      success: true;
+      message: SuccessType;
       data: T;
     };
 
 type FailResult = {
-  success: false;
   message: ErrorMessage;
 };
 

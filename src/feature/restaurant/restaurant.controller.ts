@@ -39,7 +39,6 @@ export class RestaurantController {
       createReviewDto,
     );
     return {
-      success: true,
       message: SuccessType.REVIEW_SAVE,
     };
   }
