@@ -11,6 +11,8 @@ import { AuthModule } from './feature/auth/auth.module';
 import { UserModule } from './feature/user/user.module';
 import { RestaurantModule } from './feature/restaurant/restaurant.module';
 import { CityModule } from './feature/city/city.module';
+import { NotificationModule } from './notification/notification.module';
+import { UtilModule } from './util/util.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { CityModule } from './feature/city/city.module';
     UserModule,
     RestaurantModule,
     CityModule,
+    NotificationModule,
+    UtilModule,
   ],
   providers: [],
 })
