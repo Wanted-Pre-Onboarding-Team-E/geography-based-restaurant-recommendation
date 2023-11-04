@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -8,10 +12,12 @@ import { BusinessType } from '../enum/businessType.enum';
 import { UserLib } from '../feature/user/user.lib';
 import { RestaurantLib } from '../feature/restaurant/restaurant.lib';
 import { UtilService } from '../util/util.service';
+import { FailType } from '../enum/failType.enum';
 
 @Injectable()
 export class NotificationService {
   private readonly discordWebhookUrl: string;
+  private readonly logger = new Logger(NotificationService.name);
 
   constructor(
     private readonly configService: ConfigService,
@@ -84,22 +90,20 @@ export class NotificationService {
     });
 
     // 5. 디스코드 URL과 연결된 채널로 메시지를 보낸다.
-    const response = await firstValueFrom(
-      this.httpService.post(this.discordWebhookUrl, {
-        username: '오늘 점심 뭐 먹지?',
-        avatar_url:
-          'https://cdn.pixabay.com/photo/2016/10/08/18/35/restaurant-1724294_1280.png',
-        content: '오늘의 점심 추천 맛집은? 🍛',
-        embeds: recommendationPerUser,
-      }),
-    );
-
-    /*
-    if (response.status !== 204) {
-      throw new InternalServerErrorException();
-      // TODO: Logger 달기
+    try {
+      await firstValueFrom(
+        this.httpService.post(this.discordWebhookUrl, {
+          username: '오늘 점심 뭐 먹지?',
+          avatar_url:
+            'https://cdn.pixabay.com/photo/2016/10/08/18/35/restaurant-1724294_1280.png',
+          content: '오늘의 점심 추천 맛집은? 🍛',
+          embeds: recommendationPerUser,
+        }),
+      );
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException(FailType.DICORD_MESSAGE_SEND);
     }
-    */
   }
 
   // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
