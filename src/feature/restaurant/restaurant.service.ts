@@ -11,37 +11,61 @@ export class RestaurantService {
   ) {}
 
   async getRestaurantDetailById(id: number): Promise<Restaurant> {
-    const restaurant = await this.restaurantRepository.findOne({
-      where: {
-        id: id,
-      },
-      select: {
-        id: true,
-        placeName: true,
-        businessType: true,
-        businessState: true,
-        roadNameAddress: true,
-        cityName: true,
-        latitude: true,
-        longitude: true,
-        viewCount: true,
-        totalRating: true,
-        reviews: {
-          id: true,
-          rating: true,
-          content: true,
-          user: {
-            id: true,
-            username: true,
-          },
-        },
-      },
-      relations: {
-        reviews: {
-          user: true,
-        },
-      },
-    });
+    // const restaurant = await this.restaurantRepository.findOne({
+    //   where: {
+    //     id: id,
+    //   },
+    //   select: {
+    //     id: true,
+    //     placeName: true,
+    //     businessType: true,
+    //     businessState: true,
+    //     roadNameAddress: true,
+    //     cityName: true,
+    //     latitude: true,
+    //     longitude: true,
+    //     viewCount: true,
+    //     totalRating: true,
+    //     reviews: {
+    //       id: true,
+    //       rating: true,
+    //       content: true,
+    //       user: {
+    //         id: true,
+    //         username: true,
+    //       },
+    //     },
+    //   },
+    //   relations: {
+    //     reviews: {
+    //       user: true,
+    //     },
+    //   },
+    // });
+
+    const restaurant = await this.restaurantRepository
+      .createQueryBuilder('restaurant')
+      .leftJoinAndSelect('restaurant.reviews', 'review')
+      .leftJoinAndSelect('review.user', 'user')
+      .select([
+        'restaurant.id',
+        'restaurant.placeName',
+        'restaurant.businessType',
+        'restaurant.businessState',
+        'restaurant.roadNameAddress',
+        'restaurant.cityName',
+        'restaurant.latitude',
+        'restaurant.longitude',
+        'restaurant.viewCount',
+        'restaurant.totalRating',
+        'review.id',
+        'review.rating',
+        'review.content',
+        'user.id',
+        'user.username',
+      ])
+      .where('restaurant.id = :id', { id })
+      .getOne();
     return restaurant;
   }
 
