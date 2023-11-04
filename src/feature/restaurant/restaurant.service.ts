@@ -11,38 +11,6 @@ export class RestaurantService {
   ) {}
 
   async getRestaurantDetailById(id: number): Promise<Restaurant> {
-    // const restaurant = await this.restaurantRepository.findOne({
-    //   where: {
-    //     id: id,
-    //   },
-    //   select: {
-    //     id: true,
-    //     placeName: true,
-    //     businessType: true,
-    //     businessState: true,
-    //     roadNameAddress: true,
-    //     cityName: true,
-    //     latitude: true,
-    //     longitude: true,
-    //     viewCount: true,
-    //     totalRating: true,
-    //     reviews: {
-    //       id: true,
-    //       rating: true,
-    //       content: true,
-    //       user: {
-    //         id: true,
-    //         username: true,
-    //       },
-    //     },
-    //   },
-    //   relations: {
-    //     reviews: {
-    //       user: true,
-    //     },
-    //   },
-    // });
-
     const restaurant = await this.restaurantRepository
       .createQueryBuilder('restaurant')
       .leftJoinAndSelect('restaurant.reviews', 'review')
