@@ -8,4 +8,5 @@ export enum FailType {
   USER_USERNAME_NOT_EXIST = '존재하지 않는 계정입니다.',
   USER_PASSWORD_MISMATCH = '비밀번호가 일치하지 않습니다.',
   AUTH_INVALID_TOKEN = '유효하지 않은 토큰입니다.',
+  RESTAURANT_NOT_FOUND = '맛집 정보가 존재하지 않습니다.',
 }
