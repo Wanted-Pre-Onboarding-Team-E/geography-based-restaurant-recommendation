@@ -25,27 +25,50 @@ export class ReviewService {
       throw new NotFoundException(FailType.RESTAURANT_NOT_FOUND);
     }
 
-    await this.reviewRepository.save({
+    await this.saveReview(userId, restaurantId, createReviewDto);
+
+    const reviews = await this.getReviewsByRestaurantId(restaurantId);
+
+    const avgRating = this.averageRating(reviews);
+
+    await this.restaurantService.updateRestaurant(avgRating, restaurantId);
+  }
+
+  private async saveReview(
+    userId: number,
+    restaurantId: number,
+    createReviewDto: CreateReviewDto,
+  ): Promise<void> {
+    const review = this.reviewRepository.create({
       user: { id: userId },
       restaurant: { id: restaurantId },
       rating: createReviewDto.rating,
       content: createReviewDto.content,
     });
 
-    const reviews = await this.reviewRepository
+    await this.reviewRepository.save(review);
+  }
+
+  private async getReviewsByRestaurantId(
+    restaurantId: number,
+  ): Promise<Review[]> {
+    return await this.reviewRepository
       .createQueryBuilder('review')
       .innerJoin('review.restaurant', 'restaurant')
       .where('restaurant.id = :restaurantId', { restaurantId })
       .getMany();
+  }
+
+  private async averageRating(reviews: Review[]): Promise<number> {
+    if (reviews.length === 0) {
+      return 0;
+    }
 
     const totalRating = reviews.reduce(
       (total, review) => total + review.rating,
       0,
     );
-
     const avgRating = totalRating / reviews.length;
-    restaurant.totalRating = avgRating;
-
-    await this.restaurantService.updateRestaurant(avgRating, restaurantId);
+    return avgRating;
   }
 }
