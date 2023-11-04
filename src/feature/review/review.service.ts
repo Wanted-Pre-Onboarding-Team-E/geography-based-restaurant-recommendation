@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ErrorMessage } from '../error/error.enum';
 import { Review } from 'src/entity/review.entity';
 import { CreateReviewDto } from '../restaurant/dto/CreateReviewDto';
 import { RestaurantService } from '../restaurant/restaurant.service';
+import { FailType } from 'src/enum/failType.enum';
 
 @Injectable()
 export class ReviewService {
@@ -22,7 +22,7 @@ export class ReviewService {
     const restaurant = await this.restaurantService.findOneBy(restaurantId);
 
     if (!restaurant) {
-      throw new NotFoundException(ErrorMessage.RESTAURANT_NOTFOUND);
+      throw new NotFoundException(FailType.RESTAURANT_NOT_FOUND);
     }
 
     await this.reviewRepository.save({

@@ -1,5 +1,5 @@
 import { SuccessType } from 'src/enum/successType.enum';
-import { ErrorMessage } from '../error/error.enum';
+import { FailType } from 'src/enum/failType.enum';
 
 type SuccessResult<T> = T extends void
   ? {
@@ -11,7 +11,7 @@ type SuccessResult<T> = T extends void
     };
 
 type FailResult = {
-  message: ErrorMessage;
+  message: FailType;
 };
 
 export type ApiResult<T> = SuccessResult<T> | FailResult;
