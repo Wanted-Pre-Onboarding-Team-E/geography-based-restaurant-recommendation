@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
+import { Cron } from '@nestjs/schedule';
 import { firstValueFrom } from 'rxjs';
 
 import { Restaurant } from '../entity/restaurant.entity';
@@ -31,7 +32,8 @@ export class NotificationService {
     );
   }
 
-  // TODO: 스케줄러 설정
+  // NOTE: 월요일~금요일 오전 11시 30분에 실행
+  @Cron('0 30 11 * * 1-5')
   async sendDiscordMessage() {
     // 1. 맛집 추천 서비스를 이용하는 고객만 조회한다.
     const users = await this.userLib.getUsersUsingRecommendation();
