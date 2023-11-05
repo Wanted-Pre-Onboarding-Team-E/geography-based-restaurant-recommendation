@@ -1,4 +1,3 @@
-import { BusinessType } from 'src/enum/businessType.enum';
 import { AxiosError } from 'axios';
 import { HttpService } from '@nestjs/axios';
 import { HttpException, Injectable } from '@nestjs/common';
@@ -7,7 +6,7 @@ import { ErrorStatus } from 'src/enum/errorStatus.enum';
 import { FailType } from 'src/enum/failType.enum';
 import { catchError, lastValueFrom } from 'rxjs';
 import { Restaurant } from 'src/entity/restaurant.entity';
-import { Cron } from '@nestjs/schedule';
+import { ExternalApiType } from 'src/enum/externalApiType.enum';
 
 @Injectable()
 export class ExternalApiLib {
@@ -67,19 +66,19 @@ export class ExternalApiLib {
     const pageIndex = 1;
 
     const kimbapResponse = await this.getData(
-      BusinessType.KIMBAP,
+      ExternalApiType.KIMBAP,
       pageCount,
       pageIndex,
     );
 
     const japaneseFoodResponse = await this.getData(
-      BusinessType.JAPANESE_FOOD,
+      ExternalApiType.JAPANESE_FOOD,
       pageCount,
       pageIndex,
     );
 
     const chineseFoodResponse = await this.getData(
-      BusinessType.CHINESE_FOOD,
+      ExternalApiType.CHINESE_FOOD,
       pageCount,
       pageIndex,
     );
@@ -95,26 +94,26 @@ export class ExternalApiLib {
 
   // NOTE: 데이터를 가져오기 위한 함수.
   private async getData(
-    businessType: BusinessType,
+    externalApiType: ExternalApiType,
     pageCount: number,
     pageIndex: number,
   ) {
     // 1. 공공데이터 호출
     const response = await this.callExternalApi(
-      businessType,
+      externalApiType,
       pageCount,
       pageIndex,
     );
 
     // 2. 실제 데이터
-    const rowResult = response.data[businessType][1].row; // 실제 데이터 [{}]
+    const rowResult = response.data[externalApiType][1].row; // 실제 데이터 [{}]
     if (rowResult.length < 1) {
       throw new HttpException(FailType.DATA_NOT_EXIST, ErrorStatus.NOT_FOUND);
     }
 
     // 3. 재호출을 위한 계산
     const rowTotalCount =
-      response.data[businessType][0].head[0].list_total_count;
+      response.data[externalApiType][0].head[0].list_total_count;
     const apiCallCount = Math.ceil(rowTotalCount / pageCount);
 
     // 4. 1 페이지를 넘어가는지 확인후 재호출
@@ -124,7 +123,7 @@ export class ExternalApiLib {
         pageIndex,
         rowResult,
         apiCallCount,
-        businessType,
+        externalApiType,
       );
       return combineResponse;
     }
@@ -133,7 +132,7 @@ export class ExternalApiLib {
 
   // NOTE: 외부 API를 처음 호출하는 함수.
   private async callExternalApi(
-    businessType: BusinessType,
+    externalApiType: ExternalApiType,
     pageCount: number,
     pageIndex?: number,
   ) {
@@ -141,7 +140,7 @@ export class ExternalApiLib {
 
     const response = await lastValueFrom(
       this.httpService
-        .get(`https://openapi.gg.go.kr/${businessType}`, {
+        .get(`https://openapi.gg.go.kr/${externalApiType}`, {
           params: {
             KEY: openApiKey,
             pIndex: pageIndex,
@@ -168,34 +167,34 @@ export class ExternalApiLib {
     pageIndex: number,
     responseObject: any,
     apiCallCount: number,
-    businessType: BusinessType,
+    externalApiType: ExternalApiType,
   ) {
     let upzipResponseObject = [...responseObject];
 
     for (let i = 1; i < apiCallCount; i++) {
       const recallResponse = await this.callExternalApi(
-        businessType,
+        externalApiType,
         pageCount,
         pageIndex + i,
       );
 
-      const combineResponse = (businessType: string) => {
-        switch (businessType) {
-          case BusinessType.KIMBAP:
+      const combineResponse = (externalApiType: string) => {
+        switch (externalApiType) {
+          case ExternalApiType.KIMBAP:
             return upzipResponseObject.concat(
               recallResponse.data.Genrestrtlunch[1].row,
             );
-          case BusinessType.JAPANESE_FOOD:
+          case ExternalApiType.JAPANESE_FOOD:
             return upzipResponseObject.concat(
               recallResponse.data.Genrestrtjpnfood[1].row,
             );
-          case BusinessType.CHINESE_FOOD:
+          case ExternalApiType.CHINESE_FOOD:
             return upzipResponseObject.concat(
               recallResponse.data.Genrestrtchifood[1].row,
             );
         }
       };
-      upzipResponseObject = [...combineResponse(businessType)];
+      upzipResponseObject = [...combineResponse(externalApiType)];
     }
 
     return upzipResponseObject;
