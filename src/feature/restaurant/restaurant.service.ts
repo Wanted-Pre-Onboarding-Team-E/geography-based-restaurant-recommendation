@@ -23,7 +23,7 @@ export class RestaurantService {
       .execute();
   }
 
-  async getRestaurantDetailById(id: number): Promise<any> {
+  async getRestaurantDetailById(id: number): Promise<Restaurant> {
     const { viewCount } = await this.getUpdatedViewCount(id);
 
     const cachedRestaurant = await this.cacheManager.get(`restaurant:${id}`);
