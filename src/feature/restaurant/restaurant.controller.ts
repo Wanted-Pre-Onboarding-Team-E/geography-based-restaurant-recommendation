@@ -1,22 +1,32 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  NotFoundException,
+} from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
+import { SuccessType } from '../../enum/successType.enum';
+import { FailType } from '../../enum/failType.enum';
 
 @Controller('restaurants')
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
-  // FIXME: 엔드포인트 연결 여부를 확인하기 위해 임시로 작성했습니다. 함수명은 원하시는대로 수정해주세요~!
-  @Get('/')
-  getRestaurants() {
-    return 'GET /restaurants';
-  }
 
   @Get('/:id')
-  getRestaurantsById() {
-    return 'GET /restaurants/:id';
-  }
+  async getRestaurantAndAddViewCountById(@Param('id') id: number) {
+    const updateResult =
+      await this.restaurantService.addRestaurantViewCountById(id);
 
-  @Post('/:id/review')
-  postReviewOfRestaurantById() {
-    return 'POST /restaurants/:id/review';
+    if (updateResult.affected === 0) {
+      throw new NotFoundException(FailType.RESTAURANT_NOT_FOUND);
+    }
+
+    const restaurant = await this.restaurantService.getRestaurantDetailById(id);
+
+    return {
+      message: SuccessType.RESTAURANT_DETAIL_GET,
+      data: restaurant,
+    };
   }
 }
