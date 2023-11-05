@@ -14,12 +14,23 @@ export class RestaurantService {
     private cacheManager: Cache,
   ) {}
 
-  async getRestaurantDetailById(id: number): Promise<Restaurant> {
+  async addRestaurantViewCountById(id: number): Promise<any> {
+    return await this.restaurantRepository
+      .createQueryBuilder()
+      .update(Restaurant)
+      .set({ viewCount: () => 'viewCount + 1' })
+      .where('id = :id', { id })
+      .execute();
+  }
+
+  async getRestaurantDetailById(id: number): Promise<any> {
     const cachedRestaurant = await this.cacheManager.get(`restaurant:${id}`);
 
     if (cachedRestaurant) {
-      const dbViewCount = await this.getUpdatedViewCount(id);
-      return { cachedRestaurant, viewCount: dbViewCount };
+      const { viewCount } = await this.getUpdatedViewCount(id);
+      const parsedData = JSON.parse(cachedRestaurant as string);
+      parsedData.viewCount = viewCount;
+      return parsedData;
     }
 
     const restaurant = await this.restaurantRepository
@@ -50,6 +61,7 @@ export class RestaurantService {
 
     if (restaurant) {
       const { viewCount, ...rest } = restaurant;
+      void viewCount;
       await this.cacheManager.set(`restaurant:${id}`, JSON.stringify(rest));
     }
 
@@ -65,14 +77,5 @@ export class RestaurantService {
         viewCount: true,
       },
     });
-  }
-
-  async addRestaurantViewCountById(id: number): Promise<any> {
-    return await this.restaurantRepository
-      .createQueryBuilder()
-      .update(Restaurant)
-      .set({ viewCount: () => 'viewCount + 1' })
-      .where('id = :id', { id })
-      .execute();
   }
 }
