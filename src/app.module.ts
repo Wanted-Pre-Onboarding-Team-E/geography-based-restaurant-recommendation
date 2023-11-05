@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { User } from './entity/user.entity';
@@ -11,9 +12,12 @@ import { AuthModule } from './feature/auth/auth.module';
 import { UserModule } from './feature/user/user.module';
 import { RestaurantModule } from './feature/restaurant/restaurant.module';
 import { CityModule } from './feature/city/city.module';
+import { NotificationModule } from './notification/notification.module';
+import { UtilModule } from './util/util.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.${process.env.NODE_ENV}.env`,
@@ -39,6 +43,8 @@ import { CityModule } from './feature/city/city.module';
     UserModule,
     RestaurantModule,
     CityModule,
+    NotificationModule,
+    UtilModule,
   ],
   providers: [],
 })
