@@ -137,7 +137,7 @@ export class ExternalApiLib {
     pageCount: number,
     pageIndex?: number,
   ) {
-    const openApiKey = this.configService.get<string>('OPEN_API');
+    const openApiKey = this.configService.get<string>('OPEN_API_KEY');
 
     const response = await lastValueFrom(
       this.httpService
