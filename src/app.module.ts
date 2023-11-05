@@ -11,9 +11,13 @@ import { AuthModule } from './feature/auth/auth.module';
 import { UserModule } from './feature/user/user.module';
 import { RestaurantModule } from './feature/restaurant/restaurant.module';
 import { CityModule } from './feature/city/city.module';
+import { SchedulerModule } from './feature/scheduler/scheduler.module';
+import { ExternalApiModule } from './feature/externalApi/externalApi.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.${process.env.NODE_ENV}.env`,
@@ -29,7 +33,7 @@ import { CityModule } from './feature/city/city.module';
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_DATABASE'),
           entities: [User, Restaurant, Review],
-          synchronize: configService.get<string>('NODE_ENV') === 'local',
+          synchronize: false, // 사용시에만 true
           logging: configService.get<string>('NODE_ENV') === 'local',
           namingStrategy: new SnakeNamingStrategy(), // 컬럼명 snake case로 변환
         };
@@ -39,6 +43,8 @@ import { CityModule } from './feature/city/city.module';
     UserModule,
     RestaurantModule,
     CityModule,
+    SchedulerModule,
+    ExternalApiModule,
   ],
   providers: [],
 })
