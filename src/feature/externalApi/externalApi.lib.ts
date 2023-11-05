@@ -18,6 +18,10 @@ export class ExternalApiLib {
   async getRestaurantsExternalApi(): Promise<Restaurant[]> {
     const restaurants = await this.getCombineFoods();
     const transformRestaurants = await this.transformData(restaurants);
+    
+    if(transformRestaurants.length < 1){
+      throw new HttpException(FailType.DATA_NOT_EXIST, ErrorStatus.NOT_FOUND);
+    }
     return transformRestaurants;
   }
 
