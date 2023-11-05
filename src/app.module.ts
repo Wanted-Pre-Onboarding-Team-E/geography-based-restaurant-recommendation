@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { User } from './entity/user.entity';
@@ -13,7 +14,8 @@ import { RestaurantModule } from './feature/restaurant/restaurant.module';
 import { CityModule } from './feature/city/city.module';
 import { SchedulerModule } from './feature/scheduler/scheduler.module';
 import { ExternalApiModule } from './feature/externalApi/externalApi.module';
-import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationModule } from './notification/notification.module';
+import { UtilModule } from './util/util.module';
 
 @Module({
   imports: [
@@ -45,6 +47,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     CityModule,
     SchedulerModule,
     ExternalApiModule,
+    NotificationModule,
+    UtilModule,
   ],
   providers: [],
 })
