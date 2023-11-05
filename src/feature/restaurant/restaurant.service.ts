@@ -24,10 +24,11 @@ export class RestaurantService {
   }
 
   async getRestaurantDetailById(id: number): Promise<any> {
+    const { viewCount } = await this.getUpdatedViewCount(id);
+
     const cachedRestaurant = await this.cacheManager.get(`restaurant:${id}`);
 
     if (cachedRestaurant) {
-      const { viewCount } = await this.getUpdatedViewCount(id);
       const parsedData = JSON.parse(cachedRestaurant as string);
       parsedData.viewCount = viewCount;
       return parsedData;
@@ -59,7 +60,7 @@ export class RestaurantService {
       .orderBy('review.createdAt', 'DESC')
       .getOne();
 
-    if (restaurant) {
+    if (viewCount >= 100) {
       const { viewCount, ...rest } = restaurant;
       void viewCount;
       await this.cacheManager.set(`restaurant:${id}`, JSON.stringify(rest));
