@@ -33,11 +33,12 @@ export class RestaurantService {
         'user.username',
       ])
       .where('restaurant.id = :id', { id })
+      .orderBy('review.createdAt', 'DESC')
       .getOne();
     return restaurant;
   }
 
-  async AddRestaurantViewCountById(id: number): Promise<any> {
+  async addRestaurantViewCountById(id: number): Promise<any> {
     return await this.restaurantRepository
       .createQueryBuilder()
       .update(Restaurant)

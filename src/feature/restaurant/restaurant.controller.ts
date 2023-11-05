@@ -13,15 +13,10 @@ import { FailType } from '../../enum/failType.enum';
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  @Get('/')
-  getRestaurants() {
-    return 'GET /restaurants';
-  }
-
   @Get('/:id')
   async getRestaurantAndAddViewCountById(@Param('id') id: number) {
     const updateResult =
-      await this.restaurantService.AddRestaurantViewCountById(id);
+      await this.restaurantService.addRestaurantViewCountById(id);
 
     if (updateResult.affected === 0) {
       throw new NotFoundException(FailType.RESTAURANT_NOT_FOUND);
@@ -33,10 +28,5 @@ export class RestaurantController {
       message: SuccessType.RESTAURANT_DETAIL_GET,
       data: restaurant,
     };
-  }
-
-  @Post('/:id/review')
-  postReviewOfRestaurantById() {
-    return 'POST /restaurants/:id/review';
   }
 }
