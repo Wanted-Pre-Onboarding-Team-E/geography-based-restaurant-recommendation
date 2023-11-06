@@ -18,4 +18,8 @@ export class UserLib {
   getUserById(id: number): Promise<User> {
     return this.userRepository.findOneBy({ id });
   }
+
+  getUsersUsingRecommendation() {
+    return this.userRepository.findBy({ isRecommended: true });
+  }
 }
