@@ -38,7 +38,6 @@ export class RestaurantController {
     @Query('page') page: number = 1,
     @Res() res: Response,
   ) {
-    console.log(lat, lon, range, sortBy, orderBy, search, pageCount, page);
     const restaurants = await this.restaurantService.getRestaurants(
       lat,
       lon,

@@ -1,11 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cron } from '@nestjs/schedule';
-import { Cache } from 'cache-manager';
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { Cache } from 'cache-manager';
 import * as csv from 'csv-parser';
+
+import { FailType } from '../../enum/failType.enum';
 
 @Injectable()
 export class CityService {
@@ -23,7 +25,13 @@ export class CityService {
     if (cachedData) {
       return cachedData;
     } else {
-      return this.cacheCSV();
+      await this.cacheCSV();
+      const cacheData = await this.cacheManager.get(`city`);
+      if (!cacheData) {
+        throw new NotFoundException(FailType.CITY_NOT_FOUND);
+      }
+
+      return cacheData;
     }
   }
 
@@ -35,7 +43,6 @@ export class CityService {
     fs.createReadStream(filePath)
       .pipe(csv())
       .on('data', (row) => {
-        console.log(row);
         data.push({
           city: row['do-si'],
           district: row['sgg'],
@@ -44,9 +51,10 @@ export class CityService {
         });
       })
       .on('end', () => {
-        console.log(data);
         this.cacheManager.set(`city`, data);
-        return this.cacheManager.get(`city`);
+      })
+      .on('error', (error) => {
+        Logger.error(error.message);
       });
   }
 }

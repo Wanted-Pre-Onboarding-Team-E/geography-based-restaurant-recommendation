@@ -33,7 +33,7 @@ export class RestaurantService {
     page: number,
   ) {
     if (!lat || !lon) {
-      throw new BadRequestException(FailType.RESTAURANT_LOCATION_REQUIRE);
+      throw new BadRequestException(FailType.LOCATION_NOT_FOUND);
     }
 
     return await this.restaurantRepository
