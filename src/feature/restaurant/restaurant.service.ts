@@ -13,6 +13,15 @@ export class RestaurantService {
     private readonly utilService: UtilService,
   ) {}
 
+  /** 맛집 조회
+   * @Query lat 위도
+   * @Query lon 경도
+   * @Query range 거리
+   * @Query sortBy 정렬 종류
+   * @Query orderBy 정렬 방식
+   * @Query search 검색어
+   * @Query pageCount 페이지 당 개수
+   * @Query page 패이지 */
   async getRestaurants(
     lat: number,
     lon: number,
@@ -102,7 +111,7 @@ export class RestaurantService {
   }
 
   async addRestaurantViewCountById(id: number): Promise<any> {
-    return await this.restaurantRepository
+    return this.restaurantRepository
       .createQueryBuilder()
       .update(Restaurant)
       .set({ viewCount: () => 'viewCount + 1' })

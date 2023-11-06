@@ -15,8 +15,17 @@ import { Response } from 'express';
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  /**
-   * */
+  /** 맛집 조회
+   * @Query lat 위도
+   * @Query lon 경도
+   * @Query range 거리
+   * @Query sortBy 정렬 종류
+   * @Query orderBy 정렬 방식
+   * @Query search 검색어
+   * @Query pageCount 페이지 당 개수
+   * @Query page 패이지
+   * @Res res 응답 클래스
+   * @return 응답 메시지 및 맛집 조회 목록 출력  */
   @Get('/')
   async getRestaurants(
     @Query('lat') lat: number,
