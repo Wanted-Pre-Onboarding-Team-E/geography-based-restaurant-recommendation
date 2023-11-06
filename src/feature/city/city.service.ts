@@ -15,7 +15,9 @@ export class CityService {
     });
   }
 
-  async selectCities() {
+  /** 시군구 조회
+   * @return 시군구 목록 */
+  async getCities() {
     const cachedData = await this.cacheManager.get(`city`);
 
     if (cachedData) {
@@ -35,13 +37,14 @@ export class CityService {
       .on('data', (row) => {
         console.log(row);
         data.push({
-          city: row['\u200Bdo-si'],
+          city: row['do-si'],
           district: row['sgg'],
           latitude: row['lat'],
           longitude: row['lon'],
         });
       })
       .on('end', () => {
+        console.log(data);
         this.cacheManager.set(`city`, data);
         return this.cacheManager.get(`city`);
       });
