@@ -16,7 +16,7 @@ export class Restaurant {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @OneToMany(() => Review, (review) => review.restaurant)
+  @OneToMany(() => Review, (review) => review.restaurant, { cascade: true })
   reviews: Review[];
 
   @Column({ type: 'varchar', length: 100 })
@@ -34,10 +34,10 @@ export class Restaurant {
   @Column({ type: 'varchar', length: 100 }) // 시군명
   cityName!: string;
 
-  @Column()
+  @Column({ type: 'double' })
   latitude!: number; // 위도
 
-  @Column()
+  @Column({ type: 'double' })
   longitude!: number; // 경도
 
   @Column({ default: 0 })

@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Param,
   NotFoundException,
 } from '@nestjs/common';

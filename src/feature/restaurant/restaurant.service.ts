@@ -7,7 +7,7 @@ import { Restaurant } from '../../entity/restaurant.entity';
 export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
-    private restaurantRepository: Repository<Restaurant>,
+    private readonly restaurantRepository: Repository<Restaurant>,
   ) {}
 
   async getRestaurantDetailById(id: number): Promise<Restaurant> {
@@ -44,6 +44,18 @@ export class RestaurantService {
       .update(Restaurant)
       .set({ viewCount: () => 'viewCount + 1' })
       .where('id = :id', { id })
+  }
+  
+  async findOneBy(restaurantId: number): Promise<Restaurant> {
+    return await this.restaurantRepository.findOneBy({ id: restaurantId });
+  }
+
+  async updateRestaurant(avgRating, restaurantId): Promise<void> {
+    await this.restaurantRepository
+      .createQueryBuilder()
+      .update(Restaurant)
+      .set({ totalRating: avgRating })
+      .where('id = :restaurantId', { restaurantId })
       .execute();
   }
 }
