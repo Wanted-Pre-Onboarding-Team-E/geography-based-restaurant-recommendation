@@ -20,7 +20,6 @@ export class ReviewController {
 
   @Post('/:restaurantId/review')
   async postReviewOfRestaurantById(
-    //NOTE: userId 값은 추후에 Param -> Req로 변경.
     @Req() req,
     @Param('restaurantId', ParseIntPipe) restaurantId: number,
     @Body(ValidationPipe) createReviewDto: CreateReviewDto,
