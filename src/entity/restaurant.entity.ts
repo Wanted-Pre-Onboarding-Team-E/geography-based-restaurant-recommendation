@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { BusinessType } from '../enum/businessType.enum';
+import { Review } from './review.entity';
 
 @Entity('restaurants')
 @Unique(['roadNameAddress'])
@@ -14,9 +16,8 @@ export class Restaurant {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  // NOTE: 양방향 필요해지면 추가해주세요.
-  // @OneToMany(() => Review, (review) => review.restaurant)
-  // reviews: Review[];
+  @OneToMany(() => Review, (review) => review.restaurant, { cascade: true })
+  reviews: Review[];
 
   @Column({ type: 'varchar', length: 100 })
   placeName!: string; // 사업장명

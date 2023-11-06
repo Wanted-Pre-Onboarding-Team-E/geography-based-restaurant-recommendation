@@ -19,8 +19,10 @@ export class Review {
   @JoinColumn({ name: 'user_id' }) // NOTE: 외래키를 가진 쪽에만 작성
   user!: User;
 
-  @ManyToOne(() => Restaurant)
-  @JoinColumn({ name: 'restaurant_id' }) // NOTE: 외래키를 가진 쪽에만 작성
+  @ManyToOne(() => Restaurant, (restaurant) => restaurant.reviews, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'restaurant_id' })
   restaurant!: Restaurant;
 
   @Column({ type: 'double' })

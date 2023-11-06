@@ -11,4 +11,5 @@ export enum FailType {
   DICORD_MESSAGE_SEND = '디스코드 채널에 메세지를 전송할 수 없습니다.',
   EXTERNAL_API_CALL_FAILED = '외부 API 호출이 실패했습니다.',
   DATA_NOT_EXIST = '데이터가 존재하지 않습니다.',
+  RESTAURANT_NOT_FOUND = '음식점이 존재하지 않습니다.',
 }

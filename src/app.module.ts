@@ -16,6 +16,7 @@ import { SchedulerModule } from './feature/scheduler/scheduler.module';
 import { ExternalApiModule } from './feature/externalApi/externalApi.module';
 import { NotificationModule } from './notification/notification.module';
 import { UtilModule } from './util/util.module';
+import { ReviewModule } from './feature/review/review.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { UtilModule } from './util/util.module';
     ExternalApiModule,
     NotificationModule,
     UtilModule,
+    ReviewModule,
   ],
   providers: [],
 })
