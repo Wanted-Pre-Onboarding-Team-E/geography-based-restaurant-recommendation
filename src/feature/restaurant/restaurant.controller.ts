@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 
 @Controller('restaurants')
@@ -13,10 +13,5 @@ export class RestaurantController {
   @Get('/:id')
   getRestaurantsById() {
     return 'GET /restaurants/:id';
-  }
-
-  @Post('/:id/review')
-  postReviewOfRestaurantById() {
-    return 'POST /restaurants/:id/review';
   }
 }

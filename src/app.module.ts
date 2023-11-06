@@ -14,6 +14,7 @@ import { RestaurantModule } from './feature/restaurant/restaurant.module';
 import { CityModule } from './feature/city/city.module';
 import { NotificationModule } from './notification/notification.module';
 import { UtilModule } from './util/util.module';
+import { ReviewModule } from './feature/review/review.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { UtilModule } from './util/util.module';
     CityModule,
     NotificationModule,
     UtilModule,
+    ReviewModule,
   ],
   providers: [],
 })
