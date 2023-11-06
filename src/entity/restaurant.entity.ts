@@ -16,7 +16,7 @@ export class Restaurant {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @OneToMany(() => Review, (review) => review.restaurant)
+  @OneToMany(() => Review, (review) => review.restaurant, { cascade: true })
   reviews: Review[];
 
   @Column({ type: 'varchar', length: 100 })
