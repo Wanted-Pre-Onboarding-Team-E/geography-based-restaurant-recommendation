@@ -20,12 +20,12 @@ export class CityService {
       return cachedData;
     } else {
       await this.schedulerService.updateCities();
-      const cacheData = await this.cacheManager.get(`city`);
-      if (!cacheData) {
+      const newCachedData = await this.cacheManager.get(`city`);
+      if (!newCachedData) {
         throw new NotFoundException(FailType.CITY_NOT_FOUND);
       }
 
-      return cacheData;
+      return newCachedData;
     }
   }
 }
