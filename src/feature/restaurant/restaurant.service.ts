@@ -21,7 +21,7 @@ export class RestaurantService {
    * @Query orderBy 정렬 방식
    * @Query search 검색어
    * @Query pageCount 페이지 당 개수
-   * @Query page 패이지 */
+   * @Query page 페이지 */
   async getRestaurants(
     lat: number,
     lon: number,
