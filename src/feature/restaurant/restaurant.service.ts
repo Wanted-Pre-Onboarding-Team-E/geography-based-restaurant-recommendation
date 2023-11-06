@@ -10,6 +10,10 @@ export class RestaurantService {
     private readonly restaurantRepository: Repository<Restaurant>,
   ) {}
 
+  async updateRestaurants(restaurants: Restaurant[]): Promise<void> {
+    await this.restaurantRepository.upsert(restaurants, ['roadNameAddress']);
+  }
+
   async getRestaurantDetailById(id: number): Promise<Restaurant> {
     const restaurant = await this.restaurantRepository
       .createQueryBuilder('restaurant')
@@ -43,9 +47,9 @@ export class RestaurantService {
       .createQueryBuilder()
       .update(Restaurant)
       .set({ viewCount: () => 'viewCount + 1' })
-      .where('id = :id', { id })
+      .where('id = :id', { id });
   }
-  
+
   async findOneBy(restaurantId: number): Promise<Restaurant> {
     return await this.restaurantRepository.findOneBy({ id: restaurantId });
   }

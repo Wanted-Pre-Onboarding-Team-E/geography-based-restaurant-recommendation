@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { Restaurant } from 'src/entity/restaurant.entity';
+import { RestaurantService } from './restaurant.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
-import { Restaurant } from '../../entity/restaurant.entity';
 
 @Injectable()
 export class RestaurantLib {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurantRepository: Repository<Restaurant>,
+    private readonly restaurantService: RestaurantService,
   ) {}
 
   /**
@@ -18,5 +20,9 @@ export class RestaurantLib {
       where: { totalRating: MoreThanOrEqual(3.0) },
       order: { totalRating: 'DESC' },
     });
+  }
+
+  async updateRestaurants(restaurants: Restaurant[]): Promise<void> {
+    return this.restaurantService.updateRestaurants(restaurants);
   }
 }
