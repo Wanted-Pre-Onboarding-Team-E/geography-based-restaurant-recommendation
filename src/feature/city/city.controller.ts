@@ -1,7 +1,7 @@
 import { Controller, Get, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { CityService } from './city.service';
 import { SuccessType } from '../../enum/successType.enum';
-import { Response } from 'express';
 
 @Controller('cities')
 export class CityController {
