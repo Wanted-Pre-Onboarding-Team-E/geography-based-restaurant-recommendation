@@ -34,7 +34,7 @@ export class ReviewService {
     await this.restaurantService.updateRestaurant(avgRating, restaurantId);
   }
 
-  private async saveReview(
+  async saveReview(
     userId: number,
     restaurantId: number,
     createReviewDto: CreateReviewDto,
@@ -47,9 +47,7 @@ export class ReviewService {
     });
   }
 
-  private async getReviewsByRestaurantId(
-    restaurantId: number,
-  ): Promise<Review[]> {
+  async getReviewsByRestaurantId(restaurantId: number): Promise<Review[]> {
     return await this.reviewRepository
       .createQueryBuilder('review')
       .innerJoin('review.restaurant', 'restaurant')
@@ -57,7 +55,7 @@ export class ReviewService {
       .getMany();
   }
 
-  private async averageRating(reviews: Review[]): Promise<number> {
+  async averageRating(reviews: Review[]): Promise<number> {
     if (reviews.length === 0) {
       return 0;
     }
