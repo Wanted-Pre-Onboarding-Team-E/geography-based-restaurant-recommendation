@@ -12,6 +12,8 @@ import { AuthModule } from './feature/auth/auth.module';
 import { UserModule } from './feature/user/user.module';
 import { RestaurantModule } from './feature/restaurant/restaurant.module';
 import { CityModule } from './feature/city/city.module';
+import { SchedulerModule } from './feature/scheduler/scheduler.module';
+import { ExternalApiModule } from './feature/externalApi/externalApi.module';
 import { NotificationModule } from './notification/notification.module';
 import { UtilModule } from './util/util.module';
 import { ReviewModule } from './feature/review/review.module';
@@ -34,7 +36,7 @@ import { ReviewModule } from './feature/review/review.module';
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_DATABASE'),
           entities: [User, Restaurant, Review],
-          synchronize: configService.get<string>('NODE_ENV') === 'local',
+          synchronize: false, // 사용시에만 true
           logging: configService.get<string>('NODE_ENV') === 'local',
           namingStrategy: new SnakeNamingStrategy(), // 컬럼명 snake case로 변환
         };
@@ -44,6 +46,8 @@ import { ReviewModule } from './feature/review/review.module';
     UserModule,
     RestaurantModule,
     CityModule,
+    SchedulerModule,
+    ExternalApiModule,
     NotificationModule,
     UtilModule,
     ReviewModule,

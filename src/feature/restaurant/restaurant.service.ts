@@ -82,6 +82,10 @@ export class RestaurantService {
       });
   }
 
+  async updateRestaurants(restaurants: Restaurant[]): Promise<void> {
+    await this.restaurantRepository.upsert(restaurants, ['roadNameAddress']);
+  }
+
   async getRestaurantDetailById(id: number): Promise<Restaurant> {
     const restaurant = await this.restaurantRepository
       .createQueryBuilder('restaurant')

@@ -1,5 +1,5 @@
 export enum BusinessType {
-  JAPANESE_FOOD = 'japanese food',
-  CHINESE_FOOD = 'chinese food',
-  KIMBAP = 'kimbap',
+  KIMBAP = '김밥(도시락)',
+  JAPANESE_FOOD = '일식',
+  CHINESE_FOOD = '중국식',
 }
