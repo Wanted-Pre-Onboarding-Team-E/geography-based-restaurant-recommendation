@@ -62,7 +62,7 @@ export class RestaurantService {
 
     if (viewCount >= 100) {
       const { viewCount, ...rest } = restaurant;
-      void viewCount;
+      void viewCount; //viewCount 사용하지 않겠다고 선언
       await this.cacheManager.set(
         `restaurant:${id}`,
         JSON.stringify(rest),
