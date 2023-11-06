@@ -63,7 +63,11 @@ export class RestaurantService {
     if (viewCount >= 100) {
       const { viewCount, ...rest } = restaurant;
       void viewCount;
-      await this.cacheManager.set(`restaurant:${id}`, JSON.stringify(rest));
+      await this.cacheManager.set(
+        `restaurant:${id}`,
+        JSON.stringify(rest),
+        600,
+      );
     }
 
     return restaurant;
