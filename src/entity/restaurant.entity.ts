@@ -46,10 +46,10 @@ export class Restaurant {
   @Column({ type: 'double', default: 0.0 })
   totalRating!: number; // 총평점
 
-  @Column()
-  licenseDate!: Date; // 인허가일자
+  @Column({ type: 'varchar', length: 100 })
+  licenseDate!: string; // 인허가일자
 
-  @Column()
+  @Column({ type: 'varchar', length: 50 })
   closeDate!: string; // 폐업일자
 
   @Column({ type: 'varchar', length: 50 })
@@ -67,8 +67,8 @@ export class Restaurant {
   @Column({ type: 'varchar', length: 20 })
   year!: string; // 연도
 
-  @Column()
-  isMultiUse!: boolean; // 다중이용업소여부
+  @Column({ type: 'varchar', length: 100 })
+  isMultiUse!: string; // 다중이용업소여부
 
   @Column({ type: 'varchar', length: 100 })
   gradeName!: string; // 등급구분명
@@ -91,7 +91,7 @@ export class Restaurant {
   @Column({ type: 'varchar', length: 30 })
   zipCode!: string; // 우편번호
 
-  @Column()
+  @Column({ type: 'varchar', length: 50 })
   cityCode!: string; // 시군코드
 
   @CreateDateColumn()
