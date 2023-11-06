@@ -16,7 +16,6 @@ export class Restaurant {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  // NOTE: 양방향 필요해지면 추가해주세요.
   @OneToMany(() => Review, (review) => review.restaurant, { cascade: true })
   reviews: Review[];
 
