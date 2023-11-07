@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { Cron } from '@nestjs/schedule';
 import { firstValueFrom } from 'rxjs';
 
 import { Restaurant } from '../entity/restaurant.entity';
@@ -16,9 +15,9 @@ import { UtilService } from '../util/util.service';
 import { FailType } from '../enum/failType.enum';
 
 @Injectable()
-export class NotificationService {
+export class NotificationLib {
   private readonly discordWebhookUrl: string;
-  private readonly logger = new Logger(NotificationService.name);
+  private readonly logger = new Logger(NotificationLib.name);
 
   constructor(
     private readonly configService: ConfigService,
@@ -32,8 +31,6 @@ export class NotificationService {
     );
   }
 
-  // NOTE: 월요일~금요일 오전 11시 30분에 실행
-  @Cron('0 30 11 * * 1-5')
   async sendDiscordMessage() {
     // 1. 맛집 추천 서비스를 이용하는 고객만 조회한다.
     const users = await this.userLib.getUsersUsingRecommendation();

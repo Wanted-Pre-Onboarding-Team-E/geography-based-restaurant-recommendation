@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Restaurant } from 'src/entity/restaurant.entity';
-import { RestaurantService } from './restaurant.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 
@@ -9,7 +8,6 @@ export class RestaurantLib {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurantRepository: Repository<Restaurant>,
-    private readonly restaurantService: RestaurantService,
   ) {}
 
   /**
@@ -23,6 +21,22 @@ export class RestaurantLib {
   }
 
   async updateRestaurants(restaurants: Restaurant[]): Promise<void> {
-    return this.restaurantService.updateRestaurants(restaurants);
+    await this.restaurantRepository.upsert(restaurants, ['roadNameAddress']);
+  }
+
+  async findOneBy(restaurantId: number): Promise<Restaurant> {
+    return await this.restaurantRepository.findOneBy({ id: restaurantId });
+  }
+
+  async updateTotalRatingByRestaurantId(
+    avgRating,
+    restaurantId,
+  ): Promise<void> {
+    await this.restaurantRepository
+      .createQueryBuilder()
+      .update(Restaurant)
+      .set({ totalRating: avgRating })
+      .where('id = :restaurantId', { restaurantId })
+      .execute();
   }
 }

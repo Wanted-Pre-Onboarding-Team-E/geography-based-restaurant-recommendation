@@ -97,10 +97,6 @@ export class RestaurantService {
       .execute();
   }
 
-  async updateRestaurants(restaurants: Restaurant[]): Promise<void> {
-    await this.restaurantRepository.upsert(restaurants, ['roadNameAddress']);
-  }
-
   async getRestaurantDetailById(id: number): Promise<Restaurant> {
     const { viewCount } = await this.getUpdatedViewCount(id);
 
@@ -160,18 +156,5 @@ export class RestaurantService {
         viewCount: true,
       },
     });
-  }
-
-  async findOneBy(restaurantId: number): Promise<Restaurant> {
-    return await this.restaurantRepository.findOneBy({ id: restaurantId });
-  }
-
-  async updateRestaurant(avgRating, restaurantId): Promise<void> {
-    await this.restaurantRepository
-      .createQueryBuilder()
-      .update(Restaurant)
-      .set({ totalRating: avgRating })
-      .where('id = :restaurantId', { restaurantId })
-      .execute();
   }
 }

@@ -5,13 +5,14 @@ import { Review } from 'src/entity/review.entity';
 import { CreateReviewDto } from '../restaurant/dto/createReview.dto';
 import { RestaurantService } from '../restaurant/restaurant.service';
 import { FailType } from 'src/enum/failType.enum';
+import { RestaurantLib } from '../restaurant/restaurant.lib';
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
-    private readonly restaurantService: RestaurantService,
+    private readonly restaurantLib: RestaurantLib,
   ) {}
 
   async postReviewOfRestaurantById(
@@ -19,7 +20,7 @@ export class ReviewService {
     restaurantId: number,
     createReviewDto: CreateReviewDto,
   ): Promise<void> {
-    const restaurant = await this.restaurantService.findOneBy(restaurantId);
+    const restaurant = await this.restaurantLib.findOneBy(restaurantId);
 
     if (!restaurant) {
       throw new NotFoundException(FailType.RESTAURANT_NOT_FOUND);
@@ -31,7 +32,7 @@ export class ReviewService {
 
     const avgRating = await this.averageRating(reviews);
 
-    await this.restaurantService.updateRestaurant(avgRating, restaurantId);
+    await this.restaurantLib.updateTotalRatingByRestaurantId(avgRating, restaurantId);
   }
 
   private async saveReview(
