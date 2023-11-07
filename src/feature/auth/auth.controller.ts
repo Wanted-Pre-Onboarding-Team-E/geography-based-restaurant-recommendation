@@ -16,6 +16,8 @@ import { SuccessType } from '../../enum/successType.enum';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  /** 사용자 회원가입
+   * @Body signUpUserDto 회원가입 정보 */
   @Post('sign-up')
   @HttpCode(HttpStatus.CREATED)
   async signUp(@Body() signUpUserDto: SignUpUserDto) {
@@ -37,13 +39,15 @@ export class AuthController {
     };
   }
 
+  /** 사용자 로그인
+   * @Body signInUserDto 로그인 정보 */
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() signInUserDto: SignInUserDto, @Res() res: Response) {
     // 동록된 사용자 확인
     const verifiedUser = await this.authService.verifyUser(signInUserDto);
 
-    // JWT 발급
+    // JWT Token 발급
     const payload = { id: verifiedUser.id, username: verifiedUser.username };
     const accessToken = await this.authService.getAccessToken(payload);
 
