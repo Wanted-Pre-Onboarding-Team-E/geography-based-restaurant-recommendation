@@ -2,13 +2,13 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { FailType } from '../../enum/failType.enum';
-import { SchedulerService } from '../scheduler/scheduler.service';
+import { ExternalApiLib } from '../externalApi/externalApi.lib';
 
 @Injectable()
 export class CityService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private readonly schedulerService: SchedulerService,
+    private readonly externalApiLib: ExternalApiLib,
   ) {}
 
   /** 시군구 조회
@@ -19,7 +19,7 @@ export class CityService {
     if (cachedData) {
       return cachedData;
     } else {
-      await this.schedulerService.updateCities();
+      this.externalApiLib.updateCities();
       const newCachedData = await this.cacheManager.get(`city`);
       if (!newCachedData) {
         throw new NotFoundException(FailType.CITY_NOT_FOUND);

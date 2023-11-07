@@ -1,28 +1,56 @@
-import { AxiosError } from 'axios';
 import { HttpService } from '@nestjs/axios';
-import { HttpException, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ErrorStatus } from 'src/enum/errorStatus.enum';
-import { FailType } from 'src/enum/failType.enum';
+import { AxiosError } from 'axios';
+import { Cache } from 'cache-manager';
+import * as csv from 'csv-parser';
+import * as fs from 'fs';
+import * as path from 'path';
 import { catchError, lastValueFrom } from 'rxjs';
-import { Restaurant } from 'src/entity/restaurant.entity';
-import { ExternalApiType } from 'src/enum/externalApiType.enum';
+import { ErrorStatus } from '../../enum/errorStatus.enum';
+import { ExternalApiType } from '../../enum/externalApiType.enum';
+import { FailType } from '../../enum/failType.enum';
+import { Restaurant } from '../../entity/restaurant.entity';
 
 @Injectable()
 export class ExternalApiLib {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async getRestaurantsExternalApi(): Promise<Restaurant[]> {
     const restaurants = await this.getCombineFoods();
     const transformRestaurants = await this.transformData(restaurants);
-    
-    if(transformRestaurants.length < 1){
+
+    if (transformRestaurants.length < 1) {
       throw new HttpException(FailType.DATA_NOT_EXIST, ErrorStatus.NOT_FOUND);
     }
     return transformRestaurants;
+  }
+
+  async updateCities() {
+    const filePath = path.join(__dirname, '../../../csv', 'sgg_lat_lon.csv');
+
+    const data = [];
+    fs.createReadStream(filePath)
+      .on('error', (error) => {
+        Logger.error(error);
+      })
+      .pipe(csv())
+      .on('data', (row) => {
+        data.push({
+          city: row['do-si'],
+          district: row['sgg'],
+          latitude: row['lat'],
+          longitude: row['lon'],
+        });
+      })
+      .on('end', () => {
+        this.cacheManager.set(`city`, data);
+      });
   }
 
   // NOTE: 가게이름이랑 주소가 null인 데이터 제외, 데이터 없을 경우 기본값 처리
@@ -50,7 +78,7 @@ export class ExternalApiLib {
         maleEmployeeCount: restaurant.MALE_ENFLPSN_CNT || 0,
         femaleEmployeeCount: restaurant.FEMALE_ENFLPSN_CNT || 0,
         year: restaurant.YY || '',
-        isMultiUse: restaurant.MULTI_USE_BIZESTBL_YN || false,
+        multiUse: restaurant.MULTI_USE_BIZESTBL_YN || false,
         gradeName: restaurant.GRAD_DIV_NM || '',
         totalFacilityScale: restaurant.TOT_FACLT_SCALE || '',
         surroundingAreaName: restaurant.BSNSITE_CIRCUMFR_DIV_NM || '',

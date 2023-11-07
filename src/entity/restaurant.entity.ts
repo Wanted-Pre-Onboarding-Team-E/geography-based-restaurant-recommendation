@@ -68,7 +68,7 @@ export class Restaurant {
   year!: string; // 연도
 
   @Column({ type: 'varchar', length: 100 })
-  isMultiUse!: string; // 다중이용업소여부
+  multiUse!: string; // 다중이용업소여부
 
   @Column({ type: 'varchar', length: 100 })
   gradeName!: string; // 등급구분명

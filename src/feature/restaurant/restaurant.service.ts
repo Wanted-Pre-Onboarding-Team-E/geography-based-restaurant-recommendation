@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Restaurant } from '../../entity/restaurant.entity';
 import { UtilService } from '../../util/util.service';
 import { FailType } from '../../enum/failType.enum';
+import { GetRestaurantsDto } from './dto/getRestaurant.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -22,16 +23,16 @@ export class RestaurantService {
    * @Query search 검색어
    * @Query pageCount 페이지 당 개수
    * @Query page 페이지 */
-  async getRestaurants(
-    lat: number,
-    lon: number,
-    range: number,
-    sortBy: 'distance' | 'total_rating',
-    orderBy: 'ASC' | 'DESC',
-    search: string = '',
-    pageCount: number,
-    page: number,
-  ) {
+  async getRestaurants({
+    lat,
+    lon,
+    range,
+    sortBy,
+    orderBy,
+    search,
+    pageCount,
+    page,
+  }: GetRestaurantsDto) {
     if (!lat || !lon) {
       throw new BadRequestException(FailType.LOCATION_NOT_FOUND);
     }
@@ -55,6 +56,7 @@ export class RestaurantService {
       .offset((page - 1) * pageCount)
       .getRawMany()
       .then((result: any[]) => {
+        // NOTE: 거리 조건에 대한 filter 진행 후 거리순 대한 정렬 작업
         return result
           .filter((item) => {
             return (

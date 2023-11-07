@@ -4,55 +4,28 @@ import {
   NotFoundException,
   Param,
   Query,
-  Res,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
+import { GetRestaurantsDto } from './dto/getRestaurant.dto';
 import { SuccessType } from '../../enum/successType.enum';
 import { FailType } from '../../enum/failType.enum';
-import { Response } from 'express';
 
 @Controller('restaurants')
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   /** 맛집 조회
-   * @Query lat 위도
-   * @Query lon 경도
-   * @Query range 거리
-   * @Query sortBy 정렬 종류
-   * @Query orderBy 정렬 방식
-   * @Query search 검색어
-   * @Query pageCount 페이지 당 개수
-   * @Query page 페이지
-   * @Res res 응답 클래스
+   * @Query 맛집 조회 쿼리
    * @return 응답 메시지 및 맛집 조회 목록 출력  */
   @Get('/')
-  async getRestaurants(
-    @Query('lat') lat: number,
-    @Query('lon') lon: number,
-    @Query('range') range: number,
-    @Query('sortBy') sortBy: 'distance' | 'total_rating' = 'distance',
-    @Query('orderBy') orderBy: 'ASC' | 'DESC' = 'ASC',
-    @Query('search') search: string = '',
-    @Query('pageCount') pageCount: number = 10,
-    @Query('page') page: number = 1,
-    @Res() res: Response,
-  ) {
-    const restaurants = await this.restaurantService.getRestaurants(
-      lat,
-      lon,
-      range,
-      sortBy,
-      orderBy,
-      search,
-      pageCount,
-      page,
-    );
+  async getRestaurants(@Query() getRestaurantsDto: GetRestaurantsDto) {
+    const restaurants =
+      await this.restaurantService.getRestaurants(getRestaurantsDto);
 
-    return res.send({
+    return {
       message: SuccessType.RESTAURANT_LIST_GET,
       data: restaurants,
-    });
+    };
   }
 
   @Get('/:id')
