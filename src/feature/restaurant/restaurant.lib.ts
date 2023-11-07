@@ -25,7 +25,7 @@ export class RestaurantLib {
     await this.restaurantRepository.upsert(restaurants, ['roadNameAddress']);
   }
 
-  async findOneBy(restaurantId: number): Promise<Restaurant> {
+  async getRestaurantById(restaurantId: number): Promise<Restaurant> {
     return await this.restaurantRepository.findOneBy({ id: restaurantId });
   }
 

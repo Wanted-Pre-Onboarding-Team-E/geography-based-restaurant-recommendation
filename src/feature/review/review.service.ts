@@ -20,7 +20,7 @@ export class ReviewService {
     restaurantId: number,
     createReviewDto: CreateReviewDto,
   ): Promise<void> {
-    const restaurant = await this.restaurantLib.findOneBy(restaurantId);
+    const restaurant = await this.restaurantLib.getRestaurantById(restaurantId);
 
     if (!restaurant) {
       throw new NotFoundException(FailType.RESTAURANT_NOT_FOUND);
