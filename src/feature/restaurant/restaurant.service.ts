@@ -158,7 +158,7 @@ export class RestaurantService {
           data: rest,
           cachedAt: koreaTime.toISOString(),
         }),
-        600,
+        { ttl: 600 },
       );
     }
 
@@ -202,11 +202,11 @@ export class RestaurantService {
       },
     );
 
-    const latestReviews = restaurantWithLatestReviews.reviews;
-
-    if (!latestReviews) {
+    if (!restaurantWithLatestReviews) {
       return;
     }
+
+    const latestReviews = restaurantWithLatestReviews.reviews;
 
     const mergedReviews = [...latestReviews, ...cachedData.reviews];
 
@@ -214,7 +214,7 @@ export class RestaurantService {
     await this.cacheManager.set(
       `restaurant:${id}`,
       JSON.stringify(updatedRestaurant),
-      600,
+      { ttl: 600 },
     );
     return updatedRestaurant;
   }
