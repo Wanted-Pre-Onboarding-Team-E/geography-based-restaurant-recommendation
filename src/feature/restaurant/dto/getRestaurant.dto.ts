@@ -2,14 +2,6 @@ import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class GetRestaurantsDto {
   @IsString()
-  @IsOptional()
-  lat?: number;
-
-  @IsString()
-  @IsOptional()
-  lon?: number;
-
-  @IsString()
   range!: number;
 
   // 정렬 요소
