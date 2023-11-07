@@ -20,7 +20,6 @@ describe('AuthController', () => {
   const mockJwtService = {};
 
   const mockResponse = {
-    send: jest.fn().mockReturnThis(),
     cookie: jest.fn().mockReturnThis(),
     json: jest.fn().mockReturnThis(),
   } as unknown as Response;
@@ -66,7 +65,7 @@ describe('AuthController', () => {
       .spyOn(mockAuthService, 'createUser')
       .mockResolvedValue(testSignUpUserDto);
 
-    await authController.signUp(testSignUpUserDto, mockResponse);
+    await authController.signUp(testSignUpUserDto);
 
     expect(checkUserExistsSpy).toHaveBeenCalledTimes(1);
     expect(checkPasswordValidateSpy).toHaveBeenCalledTimes(1);
@@ -85,8 +84,6 @@ describe('AuthController', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
-    const mockJwtToken = 'this_is_test_jwt_token';
 
     const verifyUserSpy = jest
       .spyOn(mockAuthService, 'verifyUser')
