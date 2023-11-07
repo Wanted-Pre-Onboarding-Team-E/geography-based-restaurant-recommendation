@@ -19,6 +19,10 @@ export class UserLib {
     return this.userRepository.findOneBy({ id });
   }
 
+  /**
+   * 추천 서비스를 사용하는 사용자 리스트를 반환한다.
+   * @return User 객체 배열
+   */
   getUsersUsingRecommendation() {
     return this.userRepository.findBy({ isRecommended: true });
   }

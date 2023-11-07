@@ -10,10 +10,10 @@ import { firstValueFrom } from 'rxjs';
 
 import { Restaurant } from '../entity/restaurant.entity';
 import { BusinessType } from '../enum/businessType.enum';
+import { FailType } from '../enum/failType.enum';
 import { UserLib } from '../feature/user/user.lib';
 import { RestaurantLib } from '../feature/restaurant/restaurant.lib';
 import { UtilService } from '../util/util.service';
-import { FailType } from '../enum/failType.enum';
 
 @Injectable()
 export class NotificationService {
@@ -27,6 +27,8 @@ export class NotificationService {
     private readonly userLib: UserLib,
     private readonly restaurantLib: RestaurantLib,
   ) {
+    // NOTE: 실제 서비스라면 사용자별 채널로 전송해야 하지만
+    //       여기서는 한 개의 채널로 여러 사용자가 알림을 받는다고 가정합니다.
     this.discordWebhookUrl = this.configService.get<string>(
       'DISCORD_WEBHOOK_URL',
     );
@@ -37,6 +39,10 @@ export class NotificationService {
   async sendDiscordMessage() {
     // 1. 맛집 추천 서비스를 이용하는 고객만 조회한다.
     const users = await this.userLib.getUsersUsingRecommendation();
+    if (users.length === 0) {
+      this.logger.log('메세지를 전송할 사용자가 없습니다.');
+      return;
+    }
 
     // 2. 총평점이 높은 순으로 맛집을 조회한다.
     const restaurants =
@@ -45,6 +51,7 @@ export class NotificationService {
     // 3. 사용자별 추천할 맛집 선정
     const userRestaurantMap = users.reduce((map, user) => {
       // 3-1. 사용자의 현재 위도/경도와 맛집의 위도/경도를 비교해서 반경 500m 이내의 맛집을 걸러낸다.
+      // TODO: SQL 쿼리로 비교해서 가져오도록 리팩터
       const restaurantsWithin500m = restaurants.filter(
         ({ latitude, longitude }) => {
           const distance = this.utilService.latLonToKm(
