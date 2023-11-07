@@ -64,7 +64,7 @@ export class RestaurantService {
                 [item.latitude, item.longitude],
                 [lat, lon],
               ) <
-              range * 1000
+              range
             );
           })
           .map((item) => {
