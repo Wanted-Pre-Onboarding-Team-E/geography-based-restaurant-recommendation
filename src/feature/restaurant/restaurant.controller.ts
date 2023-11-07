@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  NotFoundException,
-} from '@nestjs/common';
+import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { SuccessType } from '../../enum/successType.enum';
 import { FailType } from '../../enum/failType.enum';

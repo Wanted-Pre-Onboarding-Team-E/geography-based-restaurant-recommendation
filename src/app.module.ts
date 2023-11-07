@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import * as redisStore from 'cache-manager-ioredis';
 
 import { User } from './entity/user.entity';
 import { Restaurant } from './entity/restaurant.entity';
@@ -24,6 +26,12 @@ import { ReviewModule } from './feature/review/review.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.${process.env.NODE_ENV}.env`,
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
