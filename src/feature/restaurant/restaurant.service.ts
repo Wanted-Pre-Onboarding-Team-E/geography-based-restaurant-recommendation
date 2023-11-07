@@ -158,7 +158,7 @@ export class RestaurantService {
           data: rest,
           cachedAt: koreaTime.toISOString(),
         }),
-        5,
+        600,
       );
     }
 
