@@ -50,6 +50,22 @@ describe('RestaurantController', () => {
       totalRating: 0,
       createdAt: new Date('2023-11-05'),
       reviews: [],
+      cityCode: '',
+      closeDate: '',
+      femaleEmployeeCount: 0,
+      gradeName: '',
+      industryType: '',
+      licenseDate: '',
+      locationArea: '',
+      lotNumberAddress: '',
+      maleEmployeeCount: 0,
+      multiUse: '',
+      surroundingAreaName: '',
+      totalEmployeeCount: '',
+      totalFacilityScale: '',
+      waterworksName: '',
+      year: '',
+      zipCode: '',
     };
 
     jest
