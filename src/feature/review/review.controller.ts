@@ -9,10 +9,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiResult } from '../custom/apiResult';
-import { CreateReviewDto } from '../restaurant/dto/CreateReviewDto';
+import { CreateReviewDto } from '../restaurant/dto/createReview.dto';
 import { SuccessType } from 'src/enum/successType.enum';
 import { ReviewService } from './review.service';
 import { JwtAuthGuard } from '../auth/guard/jwtAuth.guard';
+
 @UseGuards(JwtAuthGuard)
 @Controller('restaurants')
 export class ReviewController {

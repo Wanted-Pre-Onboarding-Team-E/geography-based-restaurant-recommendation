@@ -19,6 +19,8 @@ import { ExternalApiModule } from './feature/externalApi/externalApi.module';
 import { NotificationModule } from './notification/notification.module';
 import { UtilModule } from './util/util.module';
 import { ReviewModule } from './feature/review/review.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [
@@ -49,6 +51,12 @@ import { ReviewModule } from './feature/review/review.module';
           namingStrategy: new SnakeNamingStrategy(), // 컬럼명 snake case로 변환
         };
       },
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
     }),
     AuthModule,
     UserModule,
