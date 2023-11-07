@@ -4,7 +4,6 @@ import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 import { Restaurant } from '../../entity/restaurant.entity';
-import { Review } from '../../entity/review.entity';
 import { UtilService } from '../../util/util.service';
 import { FailType } from '../../enum/failType.enum';
 import { GetRestaurantsDto } from './dto/getRestaurant.dto';
@@ -210,7 +209,7 @@ export class RestaurantService {
     }
 
     const mergedReviews = [...latestReviews, ...cachedData.reviews];
-    
+
     const updatedRestaurant = { ...cachedData, reviews: mergedReviews };
     await this.cacheManager.set(
       `restaurant:${id}`,
