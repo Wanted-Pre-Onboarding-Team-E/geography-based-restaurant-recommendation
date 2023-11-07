@@ -9,5 +9,9 @@ export enum FailType {
   USER_PASSWORD_MISMATCH = '비밀번호가 일치하지 않습니다.',
   AUTH_INVALID_TOKEN = '유효하지 않은 토큰입니다.',
   DICORD_MESSAGE_SEND = '디스코드 채널에 메세지를 전송할 수 없습니다.',
+  EXTERNAL_API_CALL_FAILED = '외부 API 호출이 실패했습니다.',
+  DATA_NOT_EXIST = '데이터가 존재하지 않습니다.',
   RESTAURANT_NOT_FOUND = '음식점이 존재하지 않습니다.',
+  LOCATION_NOT_FOUND = '현재 좌표를 찾을 수 없습니다.',
+  CITY_NOT_FOUND = '시군구 정보를 가져올 수 없습니다.',
 }

@@ -18,7 +18,7 @@ export class AuthController {
 
   @Post('sign-up')
   @HttpCode(HttpStatus.CREATED)
-  async signUp(@Body() signUpUserDto: SignUpUserDto, @Res() res: Response) {
+  async signUp(@Body() signUpUserDto: SignUpUserDto) {
     // 중복된 사용자 존재 여부 확인
     await this.authService.checkUserExists(signUpUserDto.username);
 
@@ -31,10 +31,10 @@ export class AuthController {
     // 사용자 생성
     const user = await this.authService.createUser(signUpUserDto);
 
-    return res.send({
+    return {
       message: SuccessType.USER_SIGN_UP,
       data: user.username,
-    });
+    };
   }
 
   @Post('sign-in')
