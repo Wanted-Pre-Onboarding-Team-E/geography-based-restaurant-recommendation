@@ -6,6 +6,5 @@ import { ExternalApiModule } from '../externalApi/externalApi.module';
 @Module({
   imports: [RestaurantModule, ExternalApiModule],
   providers: [SchedulerService],
-  exports: [SchedulerService],
 })
 export class SchedulerModule {}
