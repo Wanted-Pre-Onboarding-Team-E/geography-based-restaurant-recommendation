@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ReviewController } from 'src/feature/review/review.controller';
 import { ReviewService } from 'src/feature/review/review.service';
 import { SuccessType } from 'src/enum/successType.enum';
-import { CreateReviewDto } from 'src/feature/restaurant/dto/createReview.dto';
+import { CreateReviewDto } from 'src/feature/restaurant/dto/CreateReviewDto';
+import { RestaurantService } from 'src/feature/restaurant/restaurant.service';
 
 const reviewService = {
   postReviewOfRestaurantById: jest.fn(),
@@ -20,6 +21,7 @@ describe('ReviewController', () => {
           provide: ReviewService,
           useValue: reviewService, // Mocked ReviewService
         },
+        RestaurantService,
       ],
     }).compile();
 
