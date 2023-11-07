@@ -10,15 +10,12 @@ import * as bcrypt from 'bcrypt';
 import { DataSource } from 'typeorm';
 
 import { AuthService } from '../../../src/feature/auth/auth.service';
-import { JwtStrategy } from '../../../src/feature/auth/strategy/jwt.strategy';
 import { User } from '../../../../social-media-integration-feed/src/entity/user.entity';
 import { SignUpUserDto } from '../../../src/feature/auth/dto/signUpUser.dto';
 import { SignInUserDto } from '../../../src/feature/auth/dto/signInUser.dto';
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let jwtStrategy: JwtStrategy;
-
   const mockUserRepository = {
     create: jest.fn(),
     save: jest.fn(),
