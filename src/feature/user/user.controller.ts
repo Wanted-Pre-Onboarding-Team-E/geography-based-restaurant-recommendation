@@ -5,13 +5,13 @@ import { JwtAuthGuard } from '../auth/guard/jwtAuth.guard';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { UpdateUserLocationDto } from './dto/updateUserLocation.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   /** 사용자 정보 확인
    * @Req req 현재 로그인 정보 */
-  @UseGuards(JwtAuthGuard)
   @Get('/me')
   async getUserInfo(@Req() req: any) {
     const { id, username, isRecommended, latitude, longitude } =
@@ -25,8 +25,7 @@ export class UserController {
   /** 사용자 점심 추천 여부 업데이트
    * @Body updateUserDto 업데이트 정보
    * @Req req 현재 로그인 정보 */
-  @UseGuards(JwtAuthGuard)
-  @Patch('/')
+  @Patch('/recommendation')
   async patchUsers(@Body() updateUserDto: UpdateUserDto, @Req() req: any) {
     await this.userService.updateUserRecommendation(
       req.user.id,
@@ -44,7 +43,6 @@ export class UserController {
   /** 사용자 위치 업데이트
    * @Body updateUserLocationDto 업데이트 위치 정보
    * @Req req 현재 로그인 정보 */
-  @UseGuards(JwtAuthGuard)
   @Patch('/location')
   async patchUsersLocation(
     @Body() updateUserLocationDto: UpdateUserLocationDto,
