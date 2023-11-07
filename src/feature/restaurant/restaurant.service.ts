@@ -1,6 +1,6 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { Inject, Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Restaurant } from '../../entity/restaurant.entity';
@@ -27,16 +27,11 @@ export class RestaurantService {
    * @Query search 검색어
    * @Query pageCount 페이지 당 개수
    * @Query page 페이지 */
-  async getRestaurants({
-    lat,
-    lon,
-    range,
-    sortBy,
-    orderBy,
-    search,
-    pageCount,
-    page,
-  }: GetRestaurantsDto) {
+  async getRestaurants(
+    lat: number,
+    lon: number,
+    { range, sortBy, orderBy, search, pageCount, page }: GetRestaurantsDto,
+  ) {
     if (!lat || !lon) {
       throw new BadRequestException(FailType.LOCATION_NOT_FOUND);
     }
@@ -56,19 +51,17 @@ export class RestaurantService {
       .where(`r.placeName LIKE :placeName`, {
         placeName: `%${search}%`,
       })
-      .limit(pageCount)
-      .offset((page - 1) * pageCount)
       .getRawMany()
       .then((result: any[]) => {
         // NOTE: 거리 조건에 대한 filter 진행 후 거리순 대한 정렬 작업
+        const startIndex = (page - 1) * pageCount;
         return result
           .filter((item) => {
             return (
               this.utilService.latLonToKm(
                 [item.latitude, item.longitude],
                 [lat, lon],
-              ) <
-              range
+              ) < range
             );
           })
           .map((item) => {
@@ -84,7 +77,8 @@ export class RestaurantService {
             orderBy === 'DESC'
               ? b[`${sortBy}`] - a[`${sortBy}`]
               : a[`${sortBy}`] - b[`${sortBy}`],
-          );
+          )
+          .slice(startIndex, startIndex + pageCount);
       });
   }
 
