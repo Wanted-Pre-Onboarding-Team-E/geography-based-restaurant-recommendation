@@ -19,8 +19,6 @@ import { ExternalApiModule } from './feature/externalApi/externalApi.module';
 import { NotificationModule } from './notification/notification.module';
 import { UtilModule } from './util/util.module';
 import { ReviewModule } from './feature/review/review.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [

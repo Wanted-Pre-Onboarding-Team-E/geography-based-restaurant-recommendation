@@ -42,13 +42,11 @@ export class AuthService {
       /[!@#$%^&*]/.test(password),
     ].filter(Boolean).length;
     if (characterTypes < 2) {
-      throw new BadRequestException(FailType.USER_PASSWORD_CHARACTER_REQUIRE);
+      throw new BadRequestException(FailType.PASSWORD_CHARACTER_REQUIRE);
     }
 
     if (/([!@#$%^&*()+\-=\[\]{}|;:'",.<>/?\w])\1\1/.test(password)) {
-      throw new BadRequestException(
-        FailType.USER_PASSWORD_DISALLOW_CONSECUTIVE,
-      );
+      throw new BadRequestException(FailType.PASSWORD_DISALLOW_CONSECUTIVE);
     }
 
     const hashedConfirmPassword = await bcrypt.hash(confirmPassword, 10);
@@ -57,7 +55,7 @@ export class AuthService {
       hashedConfirmPassword,
     );
     if (!comparePasswords) {
-      throw new ConflictException(FailType.USER_CONFIRM_PASSWORD_MISMATCH);
+      throw new ConflictException(FailType.CONFIRM_PASSWORD_MISMATCH);
     }
   }
 
@@ -71,7 +69,7 @@ export class AuthService {
     });
 
     if (user) {
-      throw new ConflictException(FailType.USER_USERNAME_EXIST);
+      throw new ConflictException(FailType.USERNAME_EXIST);
     }
   }
 
@@ -85,7 +83,7 @@ export class AuthService {
       username: signInUserDto.username,
     });
     if (!user) {
-      throw new UnauthorizedException(FailType.USER_USERNAME_NOT_EXIST);
+      throw new UnauthorizedException(FailType.USERNAME_NOT_EXIST);
     }
 
     const isMatch = await this.comparePassword(
@@ -93,16 +91,21 @@ export class AuthService {
       user.password,
     );
     if (!isMatch) {
-      throw new UnauthorizedException(FailType.USER_PASSWORD_MISMATCH);
+      throw new UnauthorizedException(FailType.PASSWORD_MISMATCH);
     }
 
     return user;
   }
 
+  /** JWT Access Token 발급
+   * @param payload payload 요소 */
   async getAccessToken(payload: any) {
     return await this.jwtService.signAsync(payload);
   }
 
+  /** 평문과 암호문 비교
+   * @param plainPassword 평문
+   * @param hashedPassword 암호문 */
   private comparePassword(plainPassword: string, hashedPassword: string) {
     return bcrypt.compare(plainPassword, hashedPassword);
   }
