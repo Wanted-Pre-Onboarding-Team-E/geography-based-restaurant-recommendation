@@ -28,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.userLib.getUserById(payload.id);
 
     if (!user) {
-      throw new UnauthorizedException(FailType.USER_USERNAME_NOT_EXIST);
+      throw new UnauthorizedException(FailType.USERNAME_NOT_EXIST);
     }
 
     // req.user에 사용자 정보를 담음
