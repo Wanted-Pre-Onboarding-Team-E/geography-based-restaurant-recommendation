@@ -61,10 +61,12 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
+    "@nestjs/cache-manager": "^2.1.1",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/bcrypt": "^5.0.1",
+    "@types/cache-manager": "^4.0.4",
     "@types/cache-manager-ioredis": "^2.0.5",
     "@types/cookie-parser": "^1.4.5",
     "@types/cron": "^2.4.0",
@@ -76,6 +78,7 @@
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "cache-manager-ioredis": "^2.1.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "eslint": "^8.42.0",
