@@ -51,6 +51,7 @@ export class NotificationService {
     // 3. 사용자별 추천할 맛집 선정
     const userRestaurantMap = users.reduce((map, user) => {
       // 3-1. 사용자의 현재 위도/경도와 맛집의 위도/경도를 비교해서 반경 500m 이내의 맛집을 걸러낸다.
+      // TODO: SQL 쿼리로 비교해서 가져오도록 리팩터
       const restaurantsWithin500m = restaurants.filter(
         ({ latitude, longitude }) => {
           const distance = this.utilService.latLonToKm(
