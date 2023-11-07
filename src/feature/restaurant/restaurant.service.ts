@@ -23,6 +23,10 @@ export class RestaurantService {
       .execute();
   }
 
+  async updateRestaurants(restaurants: Restaurant[]): Promise<void> {
+    await this.restaurantRepository.upsert(restaurants, ['roadNameAddress']);
+  }
+
   async getRestaurantDetailById(id: number): Promise<Restaurant> {
     const { viewCount } = await this.getUpdatedViewCount(id);
 
