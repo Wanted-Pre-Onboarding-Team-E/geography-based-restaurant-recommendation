@@ -1,16 +1,20 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseFloatPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { GetRestaurantsDto } from './dto/getRestaurant.dto';
 import { SuccessType } from '../../enum/successType.enum';
 import { FailType } from '../../enum/failType.enum';
+import { JwtAuthGuard } from '../auth/guard/jwtAuth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('restaurants')
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
@@ -22,8 +26,24 @@ export class RestaurantController {
    * @return 응답 메시지 및 맛집 조회 목록 출력  */
   @Get('/')
   async getRestaurants(
-    @Query('lat', ParseFloatPipe) lat: number,
-    @Query('lon', ParseFloatPipe) lon: number,
+    @Query(
+      'lat',
+      new ParseFloatPipe({
+        exceptionFactory: () => {
+          throw new BadRequestException(FailType.LOCATION_NOT_FOUND);
+        },
+      }),
+    )
+    lat: number,
+    @Query(
+      'lon',
+      new ParseFloatPipe({
+        exceptionFactory: () => {
+          throw new BadRequestException(FailType.LOCATION_NOT_FOUND);
+        },
+      }),
+    )
+    lon: number,
     @Query() getRestaurantsDto: GetRestaurantsDto,
   ) {
     const restaurants = await this.restaurantService.getRestaurants(

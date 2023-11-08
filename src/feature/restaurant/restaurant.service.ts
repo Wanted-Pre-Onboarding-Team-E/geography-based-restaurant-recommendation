@@ -1,11 +1,10 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 import { Restaurant } from '../../entity/restaurant.entity';
 import { UtilService } from '../../util/util.service';
-import { FailType } from '../../enum/failType.enum';
 import { GetRestaurantsDto } from './dto/getRestaurant.dto';
 
 @Injectable()
@@ -32,10 +31,6 @@ export class RestaurantService {
     lon: number,
     { range, sortBy, orderBy, search, pageCount, page }: GetRestaurantsDto,
   ) {
-    if (!lat || !lon) {
-      throw new BadRequestException(FailType.LOCATION_NOT_FOUND);
-    }
-
     return await this.restaurantRepository
       .createQueryBuilder('r')
       .select(`r.id`, `id`)
