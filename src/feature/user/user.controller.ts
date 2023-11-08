@@ -2,7 +2,7 @@ import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SuccessType } from '../../enum/successType.enum';
 import { JwtAuthGuard } from '../auth/guard/jwtAuth.guard';
-import { UpdateUserDto } from './dto/updateUser.dto';
+import { UpdateUserRecommendationDto } from './dto/updateUserRecommendation.dto';
 import { UpdateUserLocationDto } from './dto/updateUserLocation.dto';
 
 @UseGuards(JwtAuthGuard)
@@ -26,7 +26,10 @@ export class UserController {
    * @Body updateUserDto 업데이트 정보
    * @Req req 현재 로그인 정보 */
   @Patch('/recommendation')
-  async patchUsers(@Body() updateUserDto: UpdateUserDto, @Req() req: any) {
+  async patchUsers(
+    @Body() updateUserDto: UpdateUserRecommendationDto,
+    @Req() req: any,
+  ) {
     await this.userService.updateUserRecommendation(
       req.user.id,
       updateUserDto.isRecommended,

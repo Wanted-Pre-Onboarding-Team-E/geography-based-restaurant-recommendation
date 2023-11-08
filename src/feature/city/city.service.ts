@@ -19,7 +19,7 @@ export class CityService {
     if (cachedData) {
       return cachedData;
     } else {
-      this.externalApiLib.updateCities();
+      await this.externalApiLib.updateCities();
       const newCachedData = await this.cacheManager.get(`city`);
       if (!newCachedData) {
         throw new NotFoundException(FailType.CITY_NOT_FOUND);
