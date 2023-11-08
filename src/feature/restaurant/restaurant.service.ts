@@ -202,9 +202,15 @@ export class RestaurantService {
     const mergedReviews = [...latestReviews, ...cachedData.reviews];
 
     const updatedRestaurant = { ...cachedData, reviews: mergedReviews };
+
+    const currentTime = new Date();
+    const koreaTime = new Date(currentTime.getTime() + 9 * 60 * 60 * 1000);
     await this.cacheManager.set(
       `restaurant:${id}`,
-      JSON.stringify(updatedRestaurant),
+      JSON.stringify({
+        data: updatedRestaurant,
+        cachedAt: koreaTime.toISOString(),
+      }),
       { ttl: 600 },
     );
     return updatedRestaurant;
