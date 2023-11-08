@@ -2,7 +2,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Restaurant } from '../../entity/restaurant.entity';
 import { UtilService } from '../../util/util.service';
 import { FailType } from '../../enum/failType.enum';
@@ -97,9 +97,19 @@ export class RestaurantService {
     const cachedRestaurant = await this.cacheManager.get(`restaurant:${id}`);
 
     if (cachedRestaurant) {
-      const parsedData = JSON.parse(cachedRestaurant as string);
-      parsedData.viewCount = viewCount;
-      return parsedData;
+      const { data, cachedAt } = JSON.parse(cachedRestaurant as string);
+      const updatedRestaurant = await this.mergeCachedAndLatestData(
+        id,
+        data,
+        cachedAt,
+      );
+      if (updatedRestaurant) {
+        updatedRestaurant.viewCount = viewCount;
+        return updatedRestaurant;
+      } else {
+        data.viewCount = viewCount;
+        return data;
+      }
     }
 
     const restaurant = await this.restaurantRepository
@@ -129,16 +139,75 @@ export class RestaurantService {
       .getOne();
 
     if (viewCount >= 100) {
+      const currentTime = new Date();
+      const koreaTime = new Date(currentTime.getTime() + 9 * 60 * 60 * 1000);
       const { viewCount, ...rest } = restaurant;
       void viewCount; //viewCount 사용하지 않겠다고 선언
       await this.cacheManager.set(
         `restaurant:${id}`,
-        JSON.stringify(rest),
-        600,
+        JSON.stringify({
+          data: rest,
+          cachedAt: koreaTime.toISOString(),
+        }),
+        { ttl: 600 },
       );
     }
 
     return restaurant;
+  }
+
+  async mergeCachedAndLatestData(
+    id: number,
+    cachedData: Restaurant,
+    cachedAt: Date,
+  ): Promise<Restaurant> {
+    const restaurantWithLatestReviews = await this.restaurantRepository.findOne(
+      {
+        where: {
+          id,
+          reviews: {
+            createdAt: MoreThan(cachedAt),
+          },
+        },
+        select: {
+          id: true,
+          reviews: {
+            id: true,
+            rating: true,
+            content: true,
+            createdAt: true,
+            user: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+        relations: {
+          reviews: {
+            user: true,
+          },
+        },
+        order: {
+          reviews: { createdAt: 'desc' },
+        },
+      },
+    );
+
+    if (!restaurantWithLatestReviews) {
+      return;
+    }
+
+    const latestReviews = restaurantWithLatestReviews.reviews;
+
+    const mergedReviews = [...latestReviews, ...cachedData.reviews];
+
+    const updatedRestaurant = { ...cachedData, reviews: mergedReviews };
+    await this.cacheManager.set(
+      `restaurant:${id}`,
+      JSON.stringify(updatedRestaurant),
+      { ttl: 600 },
+    );
+    return updatedRestaurant;
   }
 
   async getUpdatedViewCount(id: number): Promise<Restaurant> {

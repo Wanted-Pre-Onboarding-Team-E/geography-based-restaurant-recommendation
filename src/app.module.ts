@@ -50,12 +50,6 @@ import { ReviewModule } from './feature/review/review.module';
         };
       },
     }),
-    CacheModule.register({
-      isGlobal: true,
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
-    }),
     AuthModule,
     UserModule,
     RestaurantModule,
