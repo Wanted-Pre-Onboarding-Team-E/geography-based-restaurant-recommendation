@@ -10,7 +10,7 @@ import { UpdateUserLocationDto } from './dto/updateUserLocation.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  /** 사용자 정보 확인
+  /** 사용자 정보 조회
    * @Req req 현재 로그인 정보 */
   @Get('/me')
   async getUserInfo(@Req() req: any) {
