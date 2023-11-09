@@ -1,7 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { CityService } from './city.service';
 import { SuccessType } from '../../enum/successType.enum';
+import { JwtAuthGuard } from '../auth/guard/jwtAuth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('cities')
 export class CityController {
   constructor(private readonly cityService: CityService) {}
