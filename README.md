@@ -134,7 +134,7 @@ DISCORD_WEBHOOK_URL=
 | <img src="https://hackmd.io/_uploads/SJ-7MdLma.jpg" width="100"/> | <img src="https://hackmd.io/_uploads/B12ir7pGp.png" width="100"/> | <img src="https://hackmd.io/_uploads/HyZ86pjzp.png" width="100"/> | <img src="https://hackmd.io/_uploads/ByC5xOhz6.jpg" width="100"/> | <img src="https://hackmd.io/_uploads/B19HTJ6zp.jpg" width="100"/> |!
 |              [@kangssu](https://github.com/kangssu)               |            [@laetipark](https://github.com/laetipark)             |              [@dawwson](https://github.com/dawwson)               |             [@sayapin1](https://github.com/sayapin1)              |             [@tomeee11](https://github.com/tomeee11)              |
 
-</br>
+<br>
 
 #### 역할
 
