@@ -1,43 +1,59 @@
-<p align="center">
-  <img src="https://hackmd.io/_uploads/H1DLxtvQp.png" width="100%" height="300" />
-</p>
+![save](https://github.com/Wanted-Pre-Onboarding-Team-E/geography-based-restaurant-recommendation/assets/68440583/9c848047-be3f-4827-9b14-bccf398b6022)
 
-<h1 align="center">지리기반 맛집 추천 서비스</h1>
+# :sushi: 지리기반 맛집 추천 서비스
 
-<p align="center">
-본 서비스는 공공 데이터를 활용하여, 지역 음식점 목록을 자동으로 업데이트 합니다.<br> 
-이를 통해 사용자 위치 기반의 맛집 리스트를 제공하고 맛집들의 메뉴를 추천합니다.<br>
-더불어 맛집에 대한 평가를 등록하여<br>
-음식을 좋아하는 사람들 간의 소통을 할 수 있는 서비스입니다.
-</p>
+## #️⃣ 프로젝트 소개
+
+본 서비스는 `공공 데이터`를 활용하여, `지역 음식점 목록`을 자동으로 업데이트 합니다.<br>
+이를 통해 `사용자 위치 기반`의 `맛집 리스트`를 제공하고 맛집들의 `메뉴를 추천`합니다.<br>
+더불어 맛집에 대한 `평가`를 등록하여 음식을 좋아하는 사람들 간의 소통을 할 수 있는 서비스입니다.
 
 <br>
 
-<h2 align="center">Skills</h2>
-<p align="center">
+## 🛠️ 기술 스택
+
 <img src="https://img.shields.io/badge/Node.js-version 18-339933">&nbsp;
 <img src="https://img.shields.io/badge/Nest.js-version 10-E0234E">&nbsp;
-<img src="https://img.shields.io/badge/TypeScript-version 5-3178C6"><br>
+<img src="https://img.shields.io/badge/TypeScript-version 5-3178C6">&nbsp;
 <img src="https://img.shields.io/badge/TypeORM-version 0.3-fcad03">&nbsp;
 <img src="https://img.shields.io/badge/MySQL-version 8-00758F">&nbsp;
 <img src="https://img.shields.io/badge/Redis-version 2.1.0-DC382C">
-</p>
 
 <br>
 
-## 📖 목차
+## 🏷️ 목차
 
-1. [Getting Started](#Getting-Started)
-2. [ERD](#ERD)
-3. [REST API](#REST-API)
-4. [구현 내용](#구현-내용)
-5. [Authors](#Authors)
+1. [:gear: 환경 설정 및 실행](#gear-환경-설정-및-실행)
+2. [:cd: 데이터베이스 모델링](#cd-데이터베이스-모델링)
+3. [:earth_asia: API 명세](#earth_asia-API-명세)
+4. [:bookmark_tabs: 구현 내용](#bookmark_tabs-구현-내용)
+5. [:wave: 팀원 소개](#wave-팀원-소개)
 
 <br>
 
-## Getting Started
+## :gear: 환경 설정 및 실행
 
-데이터베이스 스키마 생성 후, 스크립트 파일 실행으로 초기 설정
+데이터베이스 스키마를 생성합니다.
+
+```sql
+CREATE DATABASE `wanted`
+    DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+서버 및 데이터베이스 연결을 위한 환경 변수를 설정합니다.
+
+```dotenv
+SERVER_PORT=
+DB_PORT=
+DB_USERNAME=
+DB_PASSWORD=
+DB_DATABASE=
+JWT_SECRET=
+OPEN_API_KEY=
+DISCORD_WEBHOOK_URL=
+```
+
+데이터베이스 스키마 생성 후, 스크립트 파일 실행으로 초기 설정합니다.
 
 ```bash
 > sh start.sh # 리눅스 스크립트 파일 실행
@@ -46,7 +62,7 @@
 
 <br>
 
-## ERD
+## :cd: 데이터베이스 모델링
 
 - 사용자 ↔️ 평가 `1:N`
     - 하나의 사용자가 여러 개의 평가를 등록할 수 있습니다.
@@ -57,13 +73,13 @@
 
 <br>
 
-## REST API
+## :earth_asia: API 명세
 
 > [`GitHub Wiki`로 이동! 🏃🏻‍💨](https://github.com/Wanted-Pre-Onboarding-Team-E/geography-based-restaurant-recommendation/wiki/REST-API)
 
 <br>
 
-## 구현 내용
+## :bookmark_tabs: 구현 내용
 
 #### 사용자
 
@@ -81,11 +97,11 @@
 
 #### 맛집
 
-- 사용자 위도/경도를 기반으로 주변 맛집 리스트를 조회합니다.
+- 사용자 위도/경도를 기반으로 `주변 맛집 리스트`를 `조회`합니다.
     - 검색어, 거리 설정을 통한 맛집 리스트 조회
     - 거리순, 평점순으로 정렬 가능
-- 평가 정보를 포함하여 특정 맛집을 상세 조회할 수 있습니다.
-- 사용자는 특정 맛집에 대해 평가를 등록할 수 있습니다. 평가 점수에 따라 맛집의 총 평점이 업데이트 됩니다.
+- 평가 정보를 포함하여 `특정 맛집을 상세 조회`할 수 있습니다.
+- 사용자는 특정 맛집에 대해 `평가`를 등록할 수 있습니다. 평가 점수에 따라 맛집의 총 평점이 업데이트 됩니다.
 
 #### 자동화
 
@@ -111,7 +127,7 @@
 
 <br>
 
-## Authors
+## :wave: 팀원 소개
 
 |                                강희수                                |                                박동훈                                |                                신은수                                |                               이드보라                                |                                이승원                                |
 |:-----------------------------------------------------------------:|:-----------------------------------------------------------------:|:-----------------------------------------------------------------:|:-----------------------------------------------------------------:|:-----------------------------------------------------------------:|
@@ -120,7 +136,7 @@
 
 </br>
 
-### 역할
+#### 역할
 
 - **강희수**
     - 공공데이터포털 `Open API` 사용 및 데이터 전처리 진행하여 데이터 저장
@@ -129,13 +145,13 @@
     - `Typeorm` 마이그레이션
     - 사용자 회원가입 및 `JWT`를 이용한 로그인
     - 사용자 조회 및 점심 추천 여부, 위치 설정
-    - 시군구 조회 및 `CSV`파일과 `Scheduling`을 이용한 시군구 목록 고도화
-    - 검색어 또는 필터링을 통한 주변 맛집 리스트 조회
+    - 시군구 조회 및 `CSV`파일과 `Scheduling`을 이용한 시군구 목록 데이터 캐싱
+    - 검색어 또는 필터링을 통한 `주변 맛집 리스트 조회`
 - **신은수**
     - 보일러 플레이트 코드 작성 및 개발 환경 설정
     - 디스코드 `Webhook`을 사용한 점심 추천 기능 및 단위 테스트
 - **이드보라**
-    - 맛집 상세 정보 불러오기 및 캐싱
+    - `맛집 상세 정보` 불러오기 및 캐싱
     - `Redis` 사용
 - **이승원**
     - `CSV` 데이터를 `Scheduling`을 통해 일정 주기마다 데이터 캐싱
