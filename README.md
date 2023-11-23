@@ -1,4 +1,4 @@
-![save](https://github.com/Wanted-Pre-Onboarding-Team-E/geography-based-restaurant-recommendation/assets/68440583/9c848047-be3f-4827-9b14-bccf398b6022)
+![geography-base-restaurant-recommendation](https://github.com/Wanted-Pre-Onboarding-Team-E/geography-based-restaurant-recommendation/assets/68440583/9c848047-be3f-4827-9b14-bccf398b6022)
 
 # :sushi: 지리기반 맛집 추천 서비스
 
@@ -83,11 +83,11 @@ DISCORD_WEBHOOK_URL=
 
 #### 사용자
 
-- 계정명, 비밀번호를 사용하여 회원가입하고, `bcrypt`로 비밀번호를 암호화합니다.
+- `계정명`, `비밀번호`를 사용하여 `회원가입`하고, `bcrypt`로 비밀번호를 `암호화`합니다.
 - `Cookie`와 `JWT` 기반으로 인증합니다.
 - 로그인 이후 모든 `API` 요청에 대해 `JWT` 유효성을 검증합니다.
-- 인증된 사용자는 사용자의 정보를 확인할 수 있습니다.
-- 사용자는 현재 위치(위도/경도), 점심 추천 기능 사용 여부를 수정할 수 있습니다.
+- `인증된 사용자`는 사용자의 정보를 `조회`할 수 있습니다.
+- 사용자는 `현재 위치`(위도/경도), `점심 추천 기능 사용 여부`를 `수정`할 수 있습니다.
 
 #### 데이터 수집 및 전처리
 
@@ -119,9 +119,9 @@ DISCORD_WEBHOOK_URL=
 
 #### 대규모 트래픽 대비 캐싱
 
-- 시군구 목록 데이터를 캐싱합니다.
+- `시군구 목록` 데이터를 `캐싱`합니다.
     - 자주 변경되지 않으므로 만료 기간 없음
-- 자주 조회되는 맛집 상세 정보를 캐싱합니다.
+- `자주 조회되는 맛집` 상세 정보를 `캐싱`합니다.
     - 조회수 100 이상일 경우 캐싱
     - 600초 삭제 데드라인 설정
 
