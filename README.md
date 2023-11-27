@@ -1,6 +1,6 @@
 ![save](https://github.com/Wanted-Pre-Onboarding-Team-E/geography-based-restaurant-recommendation/assets/68440583/9c848047-be3f-4827-9b14-bccf398b6022)
 
-# :sushi: 지리기반 맛집 추천 서비스
+# :sushi: 여기가자
 
 ## #️⃣ 프로젝트 소개
 
@@ -12,12 +12,12 @@
 
 ## 🛠️ 기술 스택
 
-<img src="https://img.shields.io/badge/Node.js-version 18-339933">&nbsp;
-<img src="https://img.shields.io/badge/Nest.js-version 10-E0234E">&nbsp;
-<img src="https://img.shields.io/badge/TypeScript-version 5-3178C6">&nbsp;
-<img src="https://img.shields.io/badge/TypeORM-version 0.3-fcad03">&nbsp;
-<img src="https://img.shields.io/badge/MySQL-version 8-00758F">&nbsp;
-<img src="https://img.shields.io/badge/Redis-version 2.1.0-DC382C">
+<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Nest.js-E0234E?style=for-the-badge&logo=nestjs&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/TypeORM-fcad03?style=for-the-badge">&nbsp;
+<img src="https://img.shields.io/badge/MySQL-00758F?style=for-the-badge&logo=mysql&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Redis-DC382C?style=for-the-badge&logo=redis&logoColor=white">
 
 <br>
 

@@ -1,7 +1,7 @@
 {
-  "name": "geography-based-restaurant-recommendation",
+  "name": "lets-go-here",
   "version": "0.0.1",
-  "description": "",
+  "description": "[ 여기가자 ] 지리기반 맛집 추천 서비스 RESTful API 서버",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
