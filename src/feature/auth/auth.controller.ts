@@ -18,7 +18,7 @@ export class AuthController {
 
   /** 사용자 회원가입
    * @Body signUpUserDto 회원가입 정보 */
-  @Post('sign-up')
+  @Post('/register')
   @HttpCode(HttpStatus.CREATED)
   async signUp(@Body() signUpUserDto: SignUpUserDto) {
     // 중복된 사용자 존재 여부 확인
@@ -41,7 +41,7 @@ export class AuthController {
 
   /** 사용자 로그인
    * @Body signInUserDto 로그인 정보 */
-  @Post('sign-in')
+  @Post('/login')
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() signInUserDto: SignInUserDto, @Res() res: Response) {
     // 동록된 사용자 확인
