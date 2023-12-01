@@ -38,37 +38,42 @@ export class NotificationLib {
       return;
     }
 
-    for (const user of users) {
-      const recommended =
-        await this.restaurantLib.getHighTotalRatingRestaurantsNearUser(
-          user.latitude,
-          user.longitude,
-        );
+    // NOTE: [맛집 조회 -> 메세지 전송] Promise를 논 블로킹으로 실행
+    // NOTE: Promise.allSettled() => 어떤 Promise가 reject 되더라도 나머지는 이행 결과 받을 수 있음
+    Promise.allSettled(
+      users.map(async (user) => {
+        // 2. 사용자별 추천 맛집 조회
+        const recommended =
+          await this.restaurantLib.getHighTotalRatingRestaurantsNearUser(
+            user.latitude,
+            user.longitude,
+          );
 
-      // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
-      const menu = this.preprocessMenu(recommended.businessType);
+        // 3. 사용자별 전송할 메세지 구성
+        // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
+        const menu = this.preprocessMenu(recommended.businessType);
 
-      const embeddedMessage = {
-        author: {
-          name: `✨ ${user.username}님을 위한 추천`,
-        },
-        title: `${recommended.placeName}`,
-        description: `${
-          recommended.businessType === BusinessType.CHINESE_FOOD
-            ? '🇨🇳 중국음식점'
-            : recommended.businessType === BusinessType.JAPANESE_FOOD
-            ? '🇯🇵 일본음식점'
-            : '🇰🇷 김밥전문점'
-        }`,
-        fields: menu.map((m) => {
-          return {
-            name: m.name,
-            value: m.price,
-          };
-        }),
-      };
+        const embeddedMessage = {
+          author: {
+            name: `✨ ${user.username}님을 위한 추천`,
+          },
+          title: `${recommended.placeName}`,
+          description: `${
+            recommended.businessType === BusinessType.CHINESE_FOOD
+              ? '🇨🇳 중국음식점'
+              : recommended.businessType === BusinessType.JAPANESE_FOOD
+              ? '🇯🇵 일본음식점'
+              : '🇰🇷 김밥전문점'
+          }`,
+          fields: menu.map((m) => {
+            return {
+              name: m.name,
+              value: m.price,
+            };
+          }),
+        };
 
-      try {
+        // 3. 사용자별 메세지 전송
         await firstValueFrom(
           this.httpService.post(this.discordWebhookUrl, {
             username: '오늘 점심 뭐 먹지?',
@@ -78,11 +83,11 @@ export class NotificationLib {
             embeds: [embeddedMessage],
           }),
         );
-      } catch (error) {
-        this.logger.error(error.message);
-        throw new InternalServerErrorException(FailType.DICORD_MESSAGE_SEND);
-      }
-    }
+      }),
+    ).catch((error) => {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException(FailType.DICORD_MESSAGE_SEND);
+    });
   }
 
   // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
