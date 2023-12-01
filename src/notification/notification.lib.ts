@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
+import { User } from '../entity/user.entity';
 import { Restaurant } from '../entity/restaurant.entity';
 import { BusinessType } from '../enum/businessType.enum';
 import { FailType } from '../enum/failType.enum';
@@ -48,7 +49,7 @@ export class NotificationLib {
     // 3. 사용자별 추천할 맛집 선정
     const userRestaurantMap = users.reduce((map, user) => {
       // 3-1. 사용자의 현재 위도/경도와 맛집의 위도/경도를 비교해서 반경 500m 이내의 맛집을 걸러낸다.
-      // TODO: SQL 쿼리로 비교해서 가져오도록 리팩터
+      // TODO: 맛집을 전부 불러와야 하는 문제 해결 필요함 => SQL 쿼리로 비교해서 가져오도록 리팩터
       const restaurantsWithin500m = restaurants.filter(
         ({ latitude, longitude }) => {
           const distance = this.utilService.latLonToKm(
@@ -64,19 +65,18 @@ export class NotificationLib {
         restaurantsWithin500m[
           Math.floor(Math.random() * restaurantsWithin500m.length)
         ];
-      map.set(user.username, randomRestaurant);
-      return map;
-    }, new Map());
 
-    // 4. 디스코드 메세지에 들어갈 내용을 구성한다.
-    const recommendationPerUser = [];
-    userRestaurantMap.forEach((restaurant: Restaurant, username: string) => {
+      map.set(user, randomRestaurant);
+      return map;
+    }, new Map<User, Restaurant>());
+
+    for (const [user, restaurant] of userRestaurantMap) {
       // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
       const menu = this.preprocessMenu(restaurant.businessType);
 
-      recommendationPerUser.push({
+      const embeddedMessage = {
         author: {
-          name: `✨ ${username}님을 위한 추천`,
+          name: `✨ ${user.username}님을 위한 추천`,
         },
         title: `${restaurant.placeName}`,
         description: `${
@@ -92,23 +92,22 @@ export class NotificationLib {
             value: m.price,
           };
         }),
-      });
-    });
+      };
 
-    // 5. 디스코드 URL과 연결된 채널로 메시지를 보낸다.
-    try {
-      await firstValueFrom(
-        this.httpService.post(this.discordWebhookUrl, {
-          username: '오늘 점심 뭐 먹지?',
-          avatar_url:
-            'https://cdn.pixabay.com/photo/2016/10/08/18/35/restaurant-1724294_1280.png',
-          content: '오늘의 점심 추천 맛집은? 🍛',
-          embeds: recommendationPerUser,
-        }),
-      );
-    } catch (error) {
-      this.logger.error(error.message);
-      throw new InternalServerErrorException(FailType.DICORD_MESSAGE_SEND);
+      try {
+        await firstValueFrom(
+          this.httpService.post(this.discordWebhookUrl, {
+            username: '오늘 점심 뭐 먹지?',
+            avatar_url:
+              'https://cdn.pixabay.com/photo/2016/10/08/18/35/restaurant-1724294_1280.png',
+            content: '오늘의 점심 추천 맛집은? 🍛',
+            embeds: [embeddedMessage],
+          }),
+        );
+      } catch (error) {
+        this.logger.error(error.message);
+        throw new InternalServerErrorException(FailType.DICORD_MESSAGE_SEND);
+      }
     }
   }
 
