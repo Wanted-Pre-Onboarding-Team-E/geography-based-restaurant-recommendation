@@ -7,13 +7,10 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
-import { User } from '../entity/user.entity';
-import { Restaurant } from '../entity/restaurant.entity';
 import { BusinessType } from '../enum/businessType.enum';
 import { FailType } from '../enum/failType.enum';
 import { UserLib } from '../feature/user/user.lib';
 import { RestaurantLib } from '../feature/restaurant/restaurant.lib';
-import { UtilService } from '../util/util.service';
 
 @Injectable()
 export class NotificationLib {
@@ -22,7 +19,6 @@ export class NotificationLib {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly utilService: UtilService,
     private readonly httpService: HttpService,
     private readonly userLib: UserLib,
     private readonly restaurantLib: RestaurantLib,
@@ -42,47 +38,25 @@ export class NotificationLib {
       return;
     }
 
-    // 2. 총평점이 높은 순으로 맛집을 조회한다.
-    const restaurants =
-      await this.restaurantLib.getHighTotalRatingRestaurants();
+    for (const user of users) {
+      const recommended =
+        await this.restaurantLib.getHighTotalRatingRestaurantsNearUser(
+          user.latitude,
+          user.longitude,
+        );
 
-    // 3. 사용자별 추천할 맛집 선정
-    const userRestaurantMap = users.reduce((map, user) => {
-      // 3-1. 사용자의 현재 위도/경도와 맛집의 위도/경도를 비교해서 반경 500m 이내의 맛집을 걸러낸다.
-      // TODO: 맛집을 전부 불러와야 하는 문제 해결 필요함 => SQL 쿼리로 비교해서 가져오도록 리팩터
-      const restaurantsWithin500m = restaurants.filter(
-        ({ latitude, longitude }) => {
-          const distance = this.utilService.latLonToKm(
-            [user.latitude, user.longitude],
-            [latitude, longitude],
-          );
-          return distance <= 0.5;
-        },
-      );
-
-      // 3-2. 사용자별로 추천할 랜덤 맛집 1개 지정
-      const randomRestaurant =
-        restaurantsWithin500m[
-          Math.floor(Math.random() * restaurantsWithin500m.length)
-        ];
-
-      map.set(user, randomRestaurant);
-      return map;
-    }, new Map<User, Restaurant>());
-
-    for (const [user, restaurant] of userRestaurantMap) {
       // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
-      const menu = this.preprocessMenu(restaurant.businessType);
+      const menu = this.preprocessMenu(recommended.businessType);
 
       const embeddedMessage = {
         author: {
           name: `✨ ${user.username}님을 위한 추천`,
         },
-        title: `${restaurant.placeName}`,
+        title: `${recommended.placeName}`,
         description: `${
-          restaurant.businessType === BusinessType.CHINESE_FOOD
+          recommended.businessType === BusinessType.CHINESE_FOOD
             ? '🇨🇳 중국음식점'
-            : restaurant.businessType === BusinessType.JAPANESE_FOOD
+            : recommended.businessType === BusinessType.JAPANESE_FOOD
             ? '🇯🇵 일본음식점'
             : '🇰🇷 김밥전문점'
         }`,
