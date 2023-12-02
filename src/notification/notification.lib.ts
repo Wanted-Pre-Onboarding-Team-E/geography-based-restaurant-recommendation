@@ -38,7 +38,7 @@ export class NotificationLib {
       return;
     }
 
-    // NOTE: 맛집 조회 -> 메세지 전송 과정을 Promise를 논 블로킹으로 실행
+    // NOTE: { 맛집 조회 -> 메세지 전송 } 과정에서 Promise를 논 블로킹으로 실행
     //       Promise.allSettled() => 어떤 Promise가 reject 되더라도 나머지는 이행 결과 받을 수 있음
     Promise.allSettled(
       users.map(async (user) => {
