@@ -81,8 +81,19 @@ export class NotificationLib {
           }),
         ).catch((error: AxiosError) => {
           if (error.status !== 204) {
+            const data = error.response.data as any;
+            const request = error.response.request;
+
+            const errorLogMessage = {
+              code: data?.code,
+              message: data?.message,
+              url: request.path,
+              username: user.username,
+            };
             this.logger.error(
-              `${FailType.DICORD_MESSAGE_SEND} : { username : ${user.username}, message: ${error.message} }`,
+              `${FailType.DICORD_MESSAGE_SEND} : ${JSON.stringify(
+                errorLogMessage,
+              )}`,
             );
           }
         });
