@@ -15,7 +15,7 @@ export class RestaurantLib {
    * @param userLatitude 사용자 위도
    * @param userLongitude 사용자 경도
    */
-  getHighTotalRatingRestaurantsNearUser(
+  getHighTotalRatingRestaurantNearUser(
     userLatitude: number,
     userLongitude: number,
   ): Promise<Restaurant> {
