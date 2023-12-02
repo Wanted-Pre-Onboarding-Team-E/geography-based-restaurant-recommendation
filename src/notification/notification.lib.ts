@@ -1,11 +1,8 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
 
 import { BusinessType } from '../enum/businessType.enum';
 import { FailType } from '../enum/failType.enum';
@@ -74,7 +71,7 @@ export class NotificationLib {
         };
 
         // 3. 사용자별 메세지 전송
-        await firstValueFrom(
+        firstValueFrom(
           this.httpService.post(this.discordWebhookUrl, {
             username: '오늘 점심 뭐 먹지?',
             avatar_url:
@@ -82,12 +79,15 @@ export class NotificationLib {
             content: '오늘의 점심 추천 맛집은? 🍛',
             embeds: [embeddedMessage],
           }),
-        );
+        ).catch((error: AxiosError) => {
+          if (error.status !== 204) {
+            this.logger.error(
+              `${FailType.DICORD_MESSAGE_SEND} : { username : ${user.username}, message: ${error.message} }`,
+            );
+          }
+        });
       }),
-    ).catch((error) => {
-      this.logger.error(error.message);
-      throw new InternalServerErrorException(FailType.DICORD_MESSAGE_SEND);
-    });
+    );
   }
 
   // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
