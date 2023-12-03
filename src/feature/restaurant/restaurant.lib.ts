@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Restaurant } from 'src/entity/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RestaurantLib {
@@ -11,14 +11,36 @@ export class RestaurantLib {
   ) {}
 
   /**
-   * 총 평점이 높은 순으로 3.0/5.0 이상의 맛집 리스트를 불러온다.
-   * @return Restaurant 객체 배열
+   * 사용자 현재 위치에서 반경 500m 이내 총 평점 3.0 이상의 랜덤 맛집 1개 조회
+   * @param userLatitude 사용자 위도
+   * @param userLongitude 사용자 경도
    */
-  getHighTotalRatingRestaurants(): Promise<Restaurant[]> {
-    return this.restaurantRepository.find({
-      where: { totalRating: MoreThanOrEqual(3.0) },
-      order: { totalRating: 'DESC' },
-    });
+  getHighTotalRatingRestaurantNearUser(
+    userLatitude: number,
+    userLongitude: number,
+  ): Promise<Restaurant> {
+    return (
+      this.restaurantRepository
+        .createQueryBuilder('r')
+        .select(['r.id', 'r.placeName', 'r.businessType', 'r.roadNameAddress'])
+        // NOTE: 하버사인 공식 사용
+        .addSelect(
+          '6371 * ACOS(' +
+            'COS(RADIANS(:userLatitude)) ' +
+            '* COS(RADIANS(r.latitude)) ' +
+            '* COS(RADIANS(r.longitude) - RADIANS(:userLongitude)) ' +
+            '+ SIN(RADIANS(:userLatitude)) * SIN(RADIANS(r.latitude))' +
+            ')',
+          'distance',
+        )
+        .setParameter('userLatitude', userLatitude)
+        .setParameter('userLongitude', userLongitude)
+        .where('r.totalRating >= 3.0')
+        .having('distance <= 0.5')
+        .orderBy('RAND()')
+        .limit(1)
+        .getOne()
+    );
   }
 
   async updateRestaurants(restaurants: Restaurant[]): Promise<void> {

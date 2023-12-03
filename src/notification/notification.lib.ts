@@ -1,18 +1,13 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
 
-import { Restaurant } from '../entity/restaurant.entity';
 import { BusinessType } from '../enum/businessType.enum';
 import { FailType } from '../enum/failType.enum';
 import { UserLib } from '../feature/user/user.lib';
 import { RestaurantLib } from '../feature/restaurant/restaurant.lib';
-import { UtilService } from '../util/util.service';
 
 @Injectable()
 export class NotificationLib {
@@ -21,7 +16,6 @@ export class NotificationLib {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly utilService: UtilService,
     private readonly httpService: HttpService,
     private readonly userLib: UserLib,
     private readonly restaurantLib: RestaurantLib,
@@ -41,75 +35,70 @@ export class NotificationLib {
       return;
     }
 
-    // 2. 총평점이 높은 순으로 맛집을 조회한다.
-    const restaurants =
-      await this.restaurantLib.getHighTotalRatingRestaurants();
-
-    // 3. 사용자별 추천할 맛집 선정
-    const userRestaurantMap = users.reduce((map, user) => {
-      // 3-1. 사용자의 현재 위도/경도와 맛집의 위도/경도를 비교해서 반경 500m 이내의 맛집을 걸러낸다.
-      // TODO: SQL 쿼리로 비교해서 가져오도록 리팩터
-      const restaurantsWithin500m = restaurants.filter(
-        ({ latitude, longitude }) => {
-          const distance = this.utilService.latLonToKm(
-            [user.latitude, user.longitude],
-            [latitude, longitude],
+    // NOTE: { 맛집 조회 -> 메세지 전송 } 과정에서 Promise를 논 블로킹으로 실행
+    //       Promise.allSettled() => 어떤 Promise가 reject 되더라도 나머지는 이행 결과 받을 수 있음
+    Promise.allSettled(
+      users.map(async (user) => {
+        // 2. 사용자별 추천 맛집 조회
+        const recommended =
+          await this.restaurantLib.getHighTotalRatingRestaurantNearUser(
+            user.latitude,
+            user.longitude,
           );
-          return distance <= 0.5;
-        },
-      );
 
-      // 3-2. 사용자별로 추천할 랜덤 맛집 1개 지정
-      const randomRestaurant =
-        restaurantsWithin500m[
-          Math.floor(Math.random() * restaurantsWithin500m.length)
-        ];
-      map.set(user.username, randomRestaurant);
-      return map;
-    }, new Map());
+        // 3. 사용자별 전송할 메세지 구성
+        // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
+        const menu = this.preprocessMenu(recommended.businessType);
 
-    // 4. 디스코드 메세지에 들어갈 내용을 구성한다.
-    const recommendationPerUser = [];
-    userRestaurantMap.forEach((restaurant: Restaurant, username: string) => {
-      // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
-      const menu = this.preprocessMenu(restaurant.businessType);
+        const embeddedMessage = {
+          author: {
+            name: `✨ ${user.username}님을 위한 추천`,
+          },
+          title: `${recommended.placeName}`,
+          description: `${
+            recommended.businessType === BusinessType.CHINESE_FOOD
+              ? '🇨🇳 중국음식점'
+              : recommended.businessType === BusinessType.JAPANESE_FOOD
+              ? '🇯🇵 일본음식점'
+              : '🇰🇷 김밥전문점'
+          }`,
+          fields: menu.map((m) => {
+            return {
+              name: m.name,
+              value: m.price,
+            };
+          }),
+        };
 
-      recommendationPerUser.push({
-        author: {
-          name: `✨ ${username}님을 위한 추천`,
-        },
-        title: `${restaurant.placeName}`,
-        description: `${
-          restaurant.businessType === BusinessType.CHINESE_FOOD
-            ? '🇨🇳 중국음식점'
-            : restaurant.businessType === BusinessType.JAPANESE_FOOD
-            ? '🇯🇵 일본음식점'
-            : '🇰🇷 김밥전문점'
-        }`,
-        fields: menu.map((m) => {
-          return {
-            name: m.name,
-            value: m.price,
-          };
-        }),
-      });
-    });
+        // 3. 사용자별 메세지 전송
+        firstValueFrom(
+          this.httpService.post(this.discordWebhookUrl, {
+            username: '오늘 점심 뭐 먹지?',
+            avatar_url:
+              'https://cdn.pixabay.com/photo/2016/10/08/18/35/restaurant-1724294_1280.png',
+            content: '오늘의 점심 추천 맛집은? 🍛',
+            embeds: [embeddedMessage],
+          }),
+        ).catch((error: AxiosError) => {
+          if (error.status !== 204) {
+            const data = error.response.data as any;
+            const request = error.response.request;
 
-    // 5. 디스코드 URL과 연결된 채널로 메시지를 보낸다.
-    try {
-      await firstValueFrom(
-        this.httpService.post(this.discordWebhookUrl, {
-          username: '오늘 점심 뭐 먹지?',
-          avatar_url:
-            'https://cdn.pixabay.com/photo/2016/10/08/18/35/restaurant-1724294_1280.png',
-          content: '오늘의 점심 추천 맛집은? 🍛',
-          embeds: recommendationPerUser,
-        }),
-      );
-    } catch (error) {
-      this.logger.error(error.message);
-      throw new InternalServerErrorException(FailType.DICORD_MESSAGE_SEND);
-    }
+            const errorLogMessage = {
+              code: data?.code,
+              message: data?.message,
+              url: request.path,
+              username: user.username,
+            };
+            this.logger.error(
+              `${FailType.DICORD_MESSAGE_SEND} : ${JSON.stringify(
+                errorLogMessage,
+              )}`,
+            );
+          }
+        });
+      }),
+    );
   }
 
   // NOTE: 웹 크롤링 등의 전처리 과정으로 식당별 메뉴 정보를 가져왔다고 가정합니다.
